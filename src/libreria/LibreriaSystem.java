@@ -28,14 +28,16 @@ public class LibreriaSystem extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField titleTextField;
     private JTextField authorTextField;
-    private JTextField priceTextField;
-    private JTextField quantityTextField;
+    private JTextField isbnTextField;
+    private JTextField genereTextField;
+    private JComboBox<Libro.valutazione> valutazioneComboBox;
+    private JComboBox<Libro.statolettura> statoLetturaComboBox;
 
     private Libreria bookShop;
     private DefaultTableModel tableModel;
 
     public LibreriaSystem() {
-        this.bookShop = new Libreria(100, "C:\\Users\\Afnan\\Desktop\\libri.txt");
+        this.bookShop = new Libreria(100, "C:\\Users\\franc\\Desktop\\libri.txt");
         this.bookShop.caricaLibriDaFile();
         //aggiornaTabellaDaLibreria();
         int borderSize = 20;
@@ -48,7 +50,7 @@ public class LibreriaSystem extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel titleLabel1 = new JLabel("Book Management System");
+        JLabel titleLabel1 = new JLabel("Personal Book Manager");
         titleLabel1.setFont(new Font("Arial", Font.BOLD, 30));
         titleLabel1.setHorizontalAlignment(JLabel.CENTER);
 
@@ -61,6 +63,11 @@ public class LibreriaSystem extends JFrame {
 
         // Add the title panel to the main frame
         add(titlePanel, BorderLayout.NORTH);
+        
+        
+        
+        JComboBox<Libro.valutazione> valutazioneComboBox;
+        JComboBox<Libro.statolettura> statoLetturaComboBox;
 
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridBagLayout());
@@ -101,11 +108,11 @@ public class LibreriaSystem extends JFrame {
         formConstraints.gridy = 2;
         formPanel.add(priceLabel, formConstraints);
 
-        priceTextField = new JTextField();
-        priceTextField.setPreferredSize(new Dimension(200, 25)); // Set preferred size for the text field
+        isbnTextField = new JTextField();
+        isbnTextField.setPreferredSize(new Dimension(200, 25)); // Set preferred size for the text field
         formConstraints.gridx = 1;
         formConstraints.gridy = 2;
-        formPanel.add(priceTextField, formConstraints);
+        formPanel.add(isbnTextField, formConstraints);
 
         JLabel quantityLabel = new JLabel("Quantity:");
         quantityLabel.setFont(new Font("Arial", Font.BOLD, 15));
@@ -114,11 +121,94 @@ public class LibreriaSystem extends JFrame {
         formConstraints.gridy = 3;
         formPanel.add(quantityLabel, formConstraints);
 
-        quantityTextField = new JTextField();
-        quantityTextField.setPreferredSize(new Dimension(200, 25)); // Set preferred size for the text field
+        genereTextField = new JTextField();
+        genereTextField.setPreferredSize(new Dimension(200, 25)); // Set preferred size for the text field
         formConstraints.gridx = 1;
         formConstraints.gridy = 3;
-        formPanel.add(quantityTextField, formConstraints);
+        formPanel.add(genereTextField, formConstraints);// Creazione del pannello di input
+        JPanel formPanel1 = new JPanel();
+        formPanel1.setLayout(new GridBagLayout());
+        GridBagConstraints formConstraints1 = new GridBagConstraints();
+        formConstraints1.fill = GridBagConstraints.HORIZONTAL;
+        formConstraints1.insets = new Insets(5, 5, 5, 5);
+
+        // Titolo
+        JLabel titleLabel11 = new JLabel("Titolo:");
+        titleLabel11.setFont(new Font("Arial", Font.BOLD, 15));
+        formConstraints1.gridx = 0;
+        formConstraints1.gridy = 0;
+        formPanel1.add(titleLabel11, formConstraints1);
+
+        titleTextField = new JTextField();
+        titleTextField.setPreferredSize(new Dimension(200, 25));
+        formConstraints1.gridx = 1;
+        formConstraints1.gridy = 0;
+        formPanel1.add(titleTextField, formConstraints1);
+
+        // Autore
+        JLabel authorLabel1 = new JLabel("Autore:");
+        authorLabel1.setFont(new Font("Arial", Font.BOLD, 15));
+        formConstraints1.gridx = 0;
+        formConstraints1.gridy = 1;
+        formPanel1.add(authorLabel1, formConstraints1);
+
+        authorTextField = new JTextField();
+        authorTextField.setPreferredSize(new Dimension(200, 25));
+        formConstraints1.gridx = 1;
+        formConstraints1.gridy = 1;
+        formPanel1.add(authorTextField, formConstraints1);
+
+        // ISBN
+        JLabel isbnLabel = new JLabel("ISBN:");
+        isbnLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        formConstraints1.gridx = 0;
+        formConstraints1.gridy = 2;
+        formPanel1.add(isbnLabel, formConstraints1);
+
+        isbnTextField = new JTextField();
+        isbnTextField.setPreferredSize(new Dimension(200, 25));
+        formConstraints1.gridx = 1;
+        formConstraints1.gridy = 2;
+        formPanel1.add(isbnTextField, formConstraints1);
+
+        // Genere
+        JLabel genereLabel = new JLabel("Genere:");
+        genereLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        formConstraints1.gridx = 0;
+        formConstraints1.gridy = 3;
+        formPanel1.add(genereLabel, formConstraints1);
+
+        genereTextField = new JTextField();
+        genereTextField.setPreferredSize(new Dimension(200, 25));
+        formConstraints1.gridx = 1;
+        formConstraints1.gridy = 3;
+        formPanel1.add(genereTextField, formConstraints1);
+
+        // Valutazione
+        JLabel valutazioneLabel = new JLabel("Valutazione:");
+        valutazioneLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        formConstraints1.gridx = 0;
+        formConstraints1.gridy = 4;
+        formPanel1.add(valutazioneLabel, formConstraints1);
+
+        valutazioneComboBox = new JComboBox<>(Libro.valutazione.values());
+        valutazioneComboBox.setPreferredSize(new Dimension(200, 25));
+        formConstraints1.gridx = 1;
+        formConstraints1.gridy = 4;
+        formPanel1.add(valutazioneComboBox, formConstraints1);
+
+        // Stato Lettura
+        JLabel statoLetturaLabel = new JLabel("Stato Lettura:");
+        statoLetturaLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        formConstraints1.gridx = 0;
+        formConstraints1.gridy = 5;
+        formPanel1.add(statoLetturaLabel, formConstraints1);
+
+        statoLetturaComboBox = new JComboBox<>(Libro.statolettura.values());
+        statoLetturaComboBox.setPreferredSize(new Dimension(200, 25));
+        formConstraints1.gridx = 1;
+        formConstraints1.gridy = 5;
+        formPanel1.add(statoLetturaComboBox, formConstraints1);
 
         // Panel for buttons
         JPanel buttonPanel = new JPanel();
@@ -227,38 +317,51 @@ public class LibreriaSystem extends JFrame {
         tablePanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Add panels to the main frame
-        add(formPanel, BorderLayout.WEST);
+        add(formPanel1, BorderLayout.WEST);
         add(tablePanel, BorderLayout.CENTER);
 
-        tableModel.addColumn("<html><b>ID</b></html>");
-        tableModel.addColumn("<html><b>Title</b></html>");
-        tableModel.addColumn("<html><b>Author</b></html>");
-        tableModel.addColumn("<html><b>Price</b></html>");
-        tableModel.addColumn("<html><b>Quantity</b></html>");
+        tableModel.addColumn("<html><b>ISBN</b></html>");
+        tableModel.addColumn("<html><b>Titolo</b></html>");
+        tableModel.addColumn("<html><b>Autore</b></html>");
+        tableModel.addColumn("<html><b>Genere</b></html>");
+        tableModel.addColumn("<html><b>Valutazione</b></html>");
+        tableModel.addColumn("<html><b>Stato lettura</b></html>");
 
         // Add an ActionListener to the "Close" button
 
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int bookId = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the book ID:"));
-                String title = titleTextField.getText();
-                String author = authorTextField.getText();
-                double price = Double.parseDouble(priceTextField.getText());
-                int quantity = Integer.parseInt(quantityTextField.getText());
-
-                Libro.valutazione val = Libro.valutazione.BUONO; // Default o da input
-                Libro.statolettura stato = Libro.statolettura.LEGGERE; // Default o da input
-                bookShop.addBook(author, title, "Genere", val, stato, String.valueOf(bookId));
-                
-
-                // Add the book to the table
-                Object[] rowData = { bookId, title, author, price, quantity };
-                tableModel.addRow(rowData);
-
-                clearTextFields();
-
-                // Save the books to the file
-                bookShop.salvalibriinfile();;
+                try {
+                    String title = titleTextField.getText();
+                    String author = authorTextField.getText();
+                    String isbn = isbnTextField.getText();
+                    String genere = genereTextField.getText();
+                    Libro.valutazione val = (Libro.valutazione) valutazioneComboBox.getSelectedItem();
+                    Libro.statolettura stato = (Libro.statolettura) statoLetturaComboBox.getSelectedItem();
+                    
+                    // Validazione dei dati
+                    if(title.isEmpty() || author.isEmpty() || isbn.isEmpty() || genere.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Tutti i campi devono essere compilati!", "Errore", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    // Aggiungi il libro all'oggetto bookShop
+                    bookShop.addBook(author, title, genere, val, stato, isbn);
+                    
+                    // Aggiungi il libro alla tabella
+                    Object[] rowData = { isbn, title, author, genere, val, stato };
+                    tableModel.addRow(rowData);
+                    
+                    // Pulisci i campi di input
+                    clearTextFields();
+                    
+                    // Salva i libri nel file
+                    bookShop.salvalibriinfile();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Errore durante l'aggiunta del libro: " + ex.getMessage(), 
+                        "Errore", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -287,11 +390,12 @@ public class LibreriaSystem extends JFrame {
                 if (book != null) {
                     // Display the book details
                     StringBuilder sb = new StringBuilder();
-                    sb.append("Book ID: ").append(book.getISBN()).append("\n");
+                    sb.append("ISBN: ").append(book.getISBN()).append("\n");
                     sb.append("Title: ").append(book.getTitolo()).append("\n");
                     sb.append("Author: ").append(book.getAutore()).append("\n");
-                    sb.append("Price: ").append(book.getV()).append("\n");
-                    sb.append("Quantity: ").append(book.getL()).append("\n");
+                    sb.append("Genere: ").append(book.getGenere()).append("\n");
+                    sb.append("Valutazione: ").append(book.getV()).append("\n");
+                    sb.append("Stato lettura: ").append(book.getL()).append("\n");
                     JOptionPane.showMessageDialog(null, sb.toString());
 
                     // Get the quantity to sell
@@ -356,54 +460,92 @@ public class LibreriaSystem extends JFrame {
                 int selectedRowIndex = table.getSelectedRow();
 
                 if (selectedRowIndex == -1) {
-                    JOptionPane.showMessageDialog(null, "Please select a row to update.");
+                    JOptionPane.showMessageDialog(null, "Per favore, seleziona un libro da aggiornare.");
                     return;
                 }
 
                 // Get the values from the selected row
-                int bookId = (int) tableModel.getValueAt(selectedRowIndex, 0);
+                String isbn = (String) tableModel.getValueAt(selectedRowIndex, 0);
                 String title = (String) tableModel.getValueAt(selectedRowIndex, 1);
                 String author = (String) tableModel.getValueAt(selectedRowIndex, 2);
-                double price = (double) tableModel.getValueAt(selectedRowIndex, 3);
-                int quantity = (int) tableModel.getValueAt(selectedRowIndex, 4);
+                String genere = (String) tableModel.getValueAt(selectedRowIndex, 3);
+                Libro.valutazione val = (Libro.valutazione) tableModel.getValueAt(selectedRowIndex, 4);
+                Libro.statolettura stato = (Libro.statolettura) tableModel.getValueAt(selectedRowIndex, 5);
 
-                // Show a dialog to update the book information
+                // Mostra un dialogo per aggiornare le informazioni del libro
+                JTextField isbnfield = new JTextField(isbn);
                 JTextField titleField = new JTextField(title);
                 JTextField authorField = new JTextField(author);
-                JTextField priceField = new JTextField(Double.toString(price));
-                JTextField quantityField = new JTextField(Integer.toString(quantity));
+                JTextField genereField = new JTextField(genere);
+                
+                JComboBox<Libro.valutazione> valComboBox = new JComboBox<>(Libro.valutazione.values());
+                valComboBox.setSelectedItem(val);
+                
+                JComboBox<Libro.statolettura> statoComboBox = new JComboBox<>(Libro.statolettura.values());
+                statoComboBox.setSelectedItem(stato);
 
-                Object[] fields = { "Title:", titleField, "Author:", authorField, "Price:", priceField, "Quantity:",
-                        quantityField };
+                Object[] fields = { 
+                    "ISBN:",    isbnfield ,
+                    "Titolo:", titleField, 
+                    "Autore:", authorField, 
+                    "Genere:", genereField,
+                    "Valutazione:", valComboBox,
+                    "Stato Lettura:", statoComboBox
+                };
 
-                int result = JOptionPane.showConfirmDialog(null, fields, "Update Book", JOptionPane.OK_CANCEL_OPTION);
+                int result = JOptionPane.showConfirmDialog(null, fields, "Aggiorna Libro", JOptionPane.OK_CANCEL_OPTION);
 
                 if (result == JOptionPane.OK_OPTION) {
-                    // Update the book information
+                    // Aggiorna le informazioni del libro
                     String newTitle = titleField.getText();
                     String newAuthor = authorField.getText();
-                    double newPrice = Double.parseDouble(priceField.getText());
-                    int newQuantity = Integer.parseInt(quantityField.getText());
+                    String newGenere = genereField.getText();
+                    Libro.valutazione newVal = (Libro.valutazione) valComboBox.getSelectedItem();
+                    Libro.statolettura newStato = (Libro.statolettura) statoComboBox.getSelectedItem();
 
-                    // Update the values in the table model
+                    // Aggiorna i valori nella tabella
                     tableModel.setValueAt(newTitle, selectedRowIndex, 1);
                     tableModel.setValueAt(newAuthor, selectedRowIndex, 2);
-                    tableModel.setValueAt(newPrice, selectedRowIndex, 3);
-                    tableModel.setValueAt(newQuantity, selectedRowIndex, 4);
+                    tableModel.setValueAt(newGenere, selectedRowIndex, 3);
+                    tableModel.setValueAt(newVal, selectedRowIndex, 4);
+                    tableModel.setValueAt(newStato, selectedRowIndex, 5);
 
-                    // Update the book information in the BookShop
-                    bookShop.updateBook(author, newTitle, newTitle, null, null, newAuthor);
+                    // Aggiorna le informazioni del libro nel BookShop
+                    bookShop.updateBook(newAuthor, newTitle, newGenere, newVal, newStato, isbn);
                 }
             }
         });
+    }
 
+    private void aggiornaTabellaDaLibreria() {
+        // TODO Auto-generated method stub
+     // Pulisci la tabella
+        while (tableModel.getRowCount() > 0) {
+            tableModel.removeRow(0);
+        }
+        
+        // Aggiungi tutti i libri dalla libreria
+        Libro[] libri = bookShop.getLibri();
+        for (Libro libro : libri) {
+            Object[] rowData = {
+                libro.getISBN(),
+                libro.getTitolo(),
+                libro.getAutore(),
+                libro.getGenere(),
+                libro.getV(),
+                libro.getL()
+            };
+            tableModel.addRow(rowData);
+        }
     }
 
     private void clearTextFields() {
         titleTextField.setText("");
         authorTextField.setText("");
-        priceTextField.setText("");
-        quantityTextField.setText("");
+        isbnTextField.setText("");
+        genereTextField.setText("");
+        valutazioneComboBox.setSelectedIndex(0);
+        statoLetturaComboBox.setSelectedIndex(0);
     }
 
     private int findRowIndexByBookId(String isbn) {
