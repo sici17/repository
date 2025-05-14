@@ -34,8 +34,10 @@ public class LibreriaSystem extends JFrame {
     private Libreria bookShop;
     private DefaultTableModel tableModel;
 
-    public void BookManagementSystem() {
-        Libreria bookShop = new Libreria(100, "C:\\Users\\Afnan\\Desktop\\price.txt");
+    public LibreriaSystem() {
+        this.bookShop = new Libreria(100, "C:\\Users\\Afnan\\Desktop\\libri.txt");
+        this.bookShop.caricaLibriDaFile();
+        //aggiornaTabellaDaLibreria();
         int borderSize = 20;
         getRootPane().setBorder(BorderFactory.createEmptyBorder(borderSize, borderSize, borderSize, borderSize));
 
@@ -244,7 +246,9 @@ public class LibreriaSystem extends JFrame {
                 double price = Double.parseDouble(priceTextField.getText());
                 int quantity = Integer.parseInt(quantityTextField.getText());
 
-                bookShop.addBook(author, title, title, null, null, author);
+                Libro.valutazione val = Libro.valutazione.BUONO; // Default o da input
+                Libro.statolettura stato = Libro.statolettura.LEGGERE; // Default o da input
+                bookShop.addBook(author, title, "Genere", val, stato, String.valueOf(bookId));
                 
 
                 // Add the book to the table
@@ -405,7 +409,7 @@ public class LibreriaSystem extends JFrame {
     private int findRowIndexByBookId(String isbn) {
         for (int row = 0; row < tableModel.getRowCount(); row++) {
             String id = (String)tableModel.getValueAt(row, 0);
-            if (id == isbn) {
+            if (id.equals(isbn)) {
                 return row;
             }
         }
