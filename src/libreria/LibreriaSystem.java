@@ -32,6 +32,11 @@ public class LibreriaSystem extends JFrame {
     private JTextField genereTextField;
     private JComboBox<Libro.valutazione> valutazioneComboBox;
     private JComboBox<Libro.statolettura> statoLetturaComboBox;
+    
+    private JTextField searchTextField;
+    private JComboBox<String> searchTypeComboBox;
+    private JComboBox<String> filterGenereComboBox;
+    private JComboBox<Libro.statolettura> filterStatoComboBox;
 
     private Libreria bookShop;
     private DefaultTableModel tableModel;
@@ -216,16 +221,19 @@ public class LibreriaSystem extends JFrame {
 
         JButton addButton = new JButton("Add Book");
         buttonPanel.add(addButton);
+        
 
-        JButton sellButton = new JButton("Sell Book");
-        buttonPanel.add(sellButton);
+        JButton filterButton = new JButton("Filter");
+        buttonPanel.add(filterButton);
+        
+       
 
         JButton deleteButton = new JButton("Delete");
         buttonPanel.add(deleteButton);
 
         JButton sortButton = new JButton("Sort");
         buttonPanel.add(sortButton);
-        JButton[] buttons = { addButton, sellButton, deleteButton, sortButton };
+        JButton[] buttons = { addButton, filterButton, deleteButton, sortButton };
 
         for (JButton button : buttons) {
             button.setBackground(new Color(240, 240, 240));
@@ -315,6 +323,40 @@ public class LibreriaSystem extends JFrame {
         tablePanel.setLayout(new BorderLayout());
         tablePanel.add(scrollPane, BorderLayout.CENTER);
         tablePanel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        
+        
+     // Aggiungere un pannello di ricerca sopra la tabella
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+
+        JLabel searchLabel = new JLabel("Search:");
+        searchLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        searchPanel.add(searchLabel);
+
+        searchTextField = new JTextField();
+        searchTextField.setPreferredSize(new Dimension(200, 25));
+        searchPanel.add(searchTextField);
+
+        JLabel searchTypeLabel = new JLabel("By:");
+        searchTypeLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        searchPanel.add(searchTypeLabel);
+
+        searchTypeComboBox = new JComboBox<>(new String[]{"Title", "Author", "ISBN"});
+        searchPanel.add(searchTypeComboBox);
+
+        JButton searchButton = new JButton("Search");
+        searchButton.setPreferredSize(new Dimension(100, 25));
+        searchPanel.add(searchButton);
+
+        JButton resetButton = new JButton("Reset");
+        resetButton.setPreferredSize(new Dimension(100, 25));
+        searchPanel.add(resetButton);
+
+        // Aggiungere il pannello di ricerca sopra la tabella
+        tablePanel.add(searchPanel, BorderLayout.NORTH);
+        
+        
 
         // Add panels to the main frame
         add(formPanel1, BorderLayout.WEST);
@@ -379,58 +421,113 @@ public class LibreriaSystem extends JFrame {
                 sorter.sort();
             }
         });
-
-        sellButton.addActionListener(new ActionListener() {
+        
+        filterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String title = JOptionPane.showInputDialog(null, "Enter the book title:");
-
-                // Find the book using the title
-                Libro book = bookShop.findBook(title);
-
-                if (book != null) {
-                    // Display the book details
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("ISBN: ").append(book.getISBN()).append("\n");
-                    sb.append("Title: ").append(book.getTitolo()).append("\n");
-                    sb.append("Author: ").append(book.getAutore()).append("\n");
-                    sb.append("Genere: ").append(book.getGenere()).append("\n");
-                    sb.append("Valutazione: ").append(book.getV()).append("\n");
-                    sb.append("Stato lettura: ").append(book.getL()).append("\n");
-                    JOptionPane.showMessageDialog(null, sb.toString());
-
-                    // Get the quantity to sell
-                    String quantityInput = JOptionPane.showInputDialog(null, "Enter the quantity to sell:");
-                    if (quantityInput.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "No quantity entered. Please try again.");
-                        return;
+                // Crea il pannello per il filtro
+                JPanel filterPanel = new JPanel();
+                filterPanel.setLayout(new GridLayout(3, 2, 10, 10));
+                
+                // Filtro per genere
+                JLabel genereLabel = new JLabel("Genere:");
+                filterPanel.add(genereLabel);
+                
+                // Ottieni tutti i generi unici
+                ArrayList<String> generi = new ArrayList<>();
+                generi.add("Tutti"); // Opzione per mostrare tutti i generi
+                
+                for (Libro libro : bookShop.getLibri()) {
+                    if (!generi.contains(libro.getGenere())) {
+                        generi.add(libro.getGenere());
                     }
-                    int quantity = Integer.parseInt(quantityInput);
-
-                    //if (quantity > 0 && quantity <= book.getQuantity()) {
-                        // Sell the book
-                        //bookShop.sellBook(title, quantity);
-
-                        // Show the success message
-                        JOptionPane.showMessageDialog(null, "Book sold successfully!");
-
-                        // Update the quantity in the table
-                        //int rowIndex = findRowIndexByBookId(book.getBookId());
-                        //if (rowIndex != -1) {
-                            //tableModel.setValueAt(book.getQuantity(), rowIndex, 4);
-                        }
-                    //} else if (quantity > book.getQuantity()) {
-                        //JOptionPane.showMessageDialog(null, "Requested quantity exceeds the available quantity. Only "
-                                //+ book.getQuantity() + " books available.");
-                   // } else {
-                    //    JOptionPane.showMessageDialog(null, "Invalid quantity entered. Please try again.");
-                   // }
-                //} else {
-                    JOptionPane.showMessageDialog(null, "Book not found!");
                 }
+                
+                filterGenereComboBox = new JComboBox<>(generi.toArray(new String[0]));
+                filterPanel.add(filterGenereComboBox);
+                
+                // Filtro per stato di lettura
+                JLabel statoLabel = new JLabel("Stato lettura:");
+                filterPanel.add(statoLabel);
+                
+                // Crea un array con "Tutti" come prima opzione seguito dai valori dell'enumerazione
+                String[] statoOptions = new String[Libro.statolettura.values().length + 1];
+                statoOptions[0] = "Tutti";
+                for (int i = 0; i < Libro.statolettura.values().length; i++) {
+                    statoOptions[i + 1] = Libro.statolettura.values()[i].toString();
+                }
+                
+                JComboBox<String> statoComboBox = new JComboBox<>(statoOptions);
+                filterPanel.add(statoComboBox);
+                
+                // Pulsanti di conferma
+                JButton applyButton = new JButton("Applica filtri");
+                filterPanel.add(applyButton);
+                
+                JButton cancelButton = new JButton("Annulla");
+                filterPanel.add(cancelButton);
+                
+                // Crea il dialogo
+                JDialog filterDialog = new JDialog();
+                filterDialog.setTitle("Filtra libri");
+                filterDialog.setSize(300, 200);
+                filterDialog.setLocationRelativeTo(null);
+                filterDialog.setModal(true);
+                filterDialog.setLayout(new BorderLayout());
+                filterDialog.add(filterPanel, BorderLayout.CENTER);
+                
+                // Azione per il pulsante Applica
+                applyButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String genereSelezionato = (String) filterGenereComboBox.getSelectedItem();
+                        String statoSelezionato = (String) statoComboBox.getSelectedItem();
+                        
+                        // Applica i filtri
+                        applicaFiltri(genereSelezionato, statoSelezionato);
+                        
+                        filterDialog.dispose();
+                    }
 
-                //clearTextFields();
+                    private void applicaFiltri(String genere, String stato) {
+                        // Svuota la tabella
+                        while (tableModel.getRowCount() > 0) {
+                            tableModel.removeRow(0);
+                        }
+                        
+                        // Ottieni tutti i libri
+                        Libro[] libri = bookShop.getLibri();
+                        
+                        // Applica i filtri
+                        for (Libro libro : libri) {
+                            boolean matchGenere = genere.equals("Tutti") || libro.getGenere().equals(genere);
+                            boolean matchStato = stato.equals("Tutti") || libro.getL().toString().equals(stato);
+                            
+                            if (matchGenere && matchStato) {
+                                Object[] rowData = {
+                                    libro.getISBN(),
+                                    libro.getTitolo(),
+                                    libro.getAutore(),
+                                    libro.getGenere(),
+                                    libro.getV(),
+                                    libro.getL()
+                                };
+                                tableModel.addRow(rowData);
+                            }
+                        }
+                    }
+                });
+                
+                // Azione per il pulsante Annulla
+                cancelButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        filterDialog.dispose();
+                    }
+                });
+                
+                filterDialog.setVisible(true);
             }
-        );
+        });
+
+        
 
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -451,6 +548,26 @@ public class LibreriaSystem extends JFrame {
                 }
 
                 clearTextFields();
+            }
+        });
+     // Aggiungere questi action listener per i pulsanti di ricerca e reset
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String testoRicerca = searchTextField.getText().trim();
+                String tipoRicerca = (String) searchTypeComboBox.getSelectedItem();
+                
+                if (!testoRicerca.isEmpty()) {
+                    cercaLibri(testoRicerca, tipoRicerca);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Inserisci un testo per la ricerca");
+                }
+            }
+        });
+
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                searchTextField.setText("");
+                aggiornaTabellaDaLibreria();
             }
         });
 
@@ -517,9 +634,9 @@ public class LibreriaSystem extends JFrame {
         });
     }
 
+ // Sostituire il metodo esistente con questa versione migliorata
     private void aggiornaTabellaDaLibreria() {
-        // TODO Auto-generated method stub
-     // Pulisci la tabella
+        // Pulisci la tabella
         while (tableModel.getRowCount() > 0) {
             tableModel.removeRow(0);
         }
@@ -538,6 +655,47 @@ public class LibreriaSystem extends JFrame {
             tableModel.addRow(rowData);
         }
     }
+    
+    private void cercaLibri(String testo, String tipo) {
+        // Svuota la tabella
+        while (tableModel.getRowCount() > 0) {
+            tableModel.removeRow(0);
+        }
+        
+        // Ottieni tutti i libri
+        Libro[] libri = bookShop.getLibri();
+        
+        // Cerca i libri in base al tipo selezionato
+        for (Libro libro : libri) {
+            boolean match = false;
+            
+            switch (tipo) {
+                case "Title":
+                    match = libro.getTitolo().toLowerCase().contains(testo.toLowerCase());
+                    break;
+                case "Author":
+                    match = libro.getAutore().toLowerCase().contains(testo.toLowerCase());
+                    break;
+                case "ISBN":
+                    match = libro.getISBN().toLowerCase().contains(testo.toLowerCase());
+                    break;
+            }
+            
+            if (match) {
+                Object[] rowData = {
+                    libro.getISBN(),
+                    libro.getTitolo(),
+                    libro.getAutore(),
+                    libro.getGenere(),
+                    libro.getV(),
+                    libro.getL()
+                };
+                tableModel.addRow(rowData);
+            }
+        }
+    }
+    
+    
 
     private void clearTextFields() {
         titleTextField.setText("");
