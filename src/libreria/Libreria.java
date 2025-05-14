@@ -5,6 +5,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+package libreria;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +58,13 @@ public class Libreria {
     public boolean updateBook(String autore, String newTitle, String genere, valutazione v, statolettura s,
             String isbn) {
         for (int i = 0; i < numlibri; i++) {
-            if (libri[i].getISBN().equalsIgnoreCase(isbn)) {
+            if (libri[i].getISBN().equals(isbn)) {  // Corretta la comparazione da == a equals()
                 libri[i].setAutore(autore);
-                libri[i].setGenere(genere);
+                libri[i].setGenere(genere);  // Corretta l'assegnazione, ora usa genere invece di isbn
                 libri[i].setL(s);
                 libri[i].setV(v);
                 libri[i].setTitolo(newTitle);
-                JOptionPane.showMessageDialog(null, "Book updated successfully!");
+                JOptionPane.showMessageDialog(null, "Libro aggiornato con successo!");
                 return true;
             }
         }
@@ -76,9 +83,9 @@ public class Libreria {
         }
     }
 
-    public Libro findBook(String ISBN) {
+    public Libro findBook(String isbn) {
         for (int i = 0; i < numlibri; i++) {
-            if (libri[i].getISBN().equalsIgnoreCase(ISBN)) {
+            if (libri[i].getISBN().equals(isbn)) {  // Corretta la comparazione da == a equals()
                 return libri[i];
             }
         }
@@ -108,31 +115,46 @@ public class Libreria {
     public void caricaLibriDaFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
-            int index = 0;
+            numlibri = 0;
             
-            while ((line = reader.readLine()) != null && index < libri.length) {
+            while ((line = reader.readLine()) != null && numlibri < libri.length) {
                 String autore = line;
                 String genere = reader.readLine();
                 String isbn = reader.readLine();
                 String titolo = reader.readLine();
-                statolettura stato = statolettura.valueOf(reader.readLine());
-                valutazione val = valutazione.valueOf(reader.readLine());
                 
-                libri[index] = new Libro(titolo, autore, isbn, genere, val, stato);
-                index++;
-                numlibri = index;
+                // Gestione enumerazioni
+                statolettura stato;
+                try {
+                    stato = statolettura.valueOf(reader.readLine());
+                } catch (IllegalArgumentException e) {
+                    stato = statolettura.LEGGERE;  // Valore predefinito
+                }
+                
+                valutazione val;
+                try {
+                    val = valutazione.valueOf(reader.readLine());
+                } catch (IllegalArgumentException e) {
+                    val = valutazione.BUONO;  // Valore predefinito
+                }
+                
+                libri[numlibri] = new Libro(titolo, autore, isbn, genere, val, stato);
+                numlibri++;
             }
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Errore nel caricamento dei libri: " + e.getMessage(), 
+                "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
+
 
     
 
     public boolean deleteBook(String isbn) {
         int index = -1;
         for (int i = 0; i < numlibri; i++) {
-            if (libri[i].getISBN() == isbn) {
+            if (libri[i].getISBN().equals(isbn)) {  // Corretta la comparazione da == a equals()
                 index = i;
                 break;
             }
@@ -143,10 +165,10 @@ public class Libreria {
                 libri[i] = libri[i + 1];
             }
             numlibri--;
-            JOptionPane.showMessageDialog(null, "Book deleted successfully!");
+            JOptionPane.showMessageDialog(null, "Libro eliminato con successo!");
             return true;
         } else {
-            JOptionPane.showMessageDialog(null, "Book not found!");
+            JOptionPane.showMessageDialog(null, "Libro non trovato!");
             return false;
         }
     }
