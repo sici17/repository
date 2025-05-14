@@ -130,7 +130,7 @@ public class LibreriaSystem extends JFrame {
         JButton sellButton = new JButton("Sell Book");
         buttonPanel.add(sellButton);
 
-        JButton deleteButton = new JButton("Delete Book");
+        JButton deleteButton = new JButton("Delete");
         buttonPanel.add(deleteButton);
 
         JButton sortButton = new JButton("Sort");
@@ -158,7 +158,7 @@ public class LibreriaSystem extends JFrame {
             });
         }
 
-        JButton updateButton = new JButton("Update Book");
+        JButton updateButton = new JButton("Update");
         buttonPanel.add(updateButton);
         updateButton.setBackground(new Color(240, 240, 240));
         updateButton.setForeground(Color.DARK_GRAY);
