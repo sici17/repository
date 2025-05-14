@@ -1,8 +1,12 @@
 package libreria;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -15,9 +19,9 @@ public class Libreria {
     private int numlibri;
     private String path;
     
-    public Libreria(int numlibri, String path) {
-        libri=new Libro[numlibri];
-        numlibri = 0;
+    public Libreria(int maxLibri, String path) {
+        libri = new Libro[maxLibri];
+        this.numlibri = 0;
         this.path = path;
     }
     
@@ -47,9 +51,9 @@ public class Libreria {
     public boolean updateBook(String autore, String newTitle, String genere, valutazione v, statolettura s,
             String isbn) {
         for (int i = 0; i < numlibri; i++) {
-            if (libri[i].getISBN() == isbn) {
+            if (libri[i].getISBN().equalsIgnoreCase(isbn)) {
                 libri[i].setAutore(autore);
-                libri[i].setGenere(isbn);
+                libri[i].setGenere(genere);
                 libri[i].setL(s);
                 libri[i].setV(v);
                 libri[i].setTitolo(newTitle);
@@ -72,13 +76,55 @@ public class Libreria {
         }
     }
 
-    public Libro findBook(String title) {
+    public Libro findBook(String ISBN) {
         for (int i = 0; i < numlibri; i++) {
-            if (libri[i].getISBN().equalsIgnoreCase(title)) {
+            if (libri[i].getISBN().equalsIgnoreCase(ISBN)) {
                 return libri[i];
             }
         }
         return null;
+    }
+    
+    public Libro[] filtraPerGenere(String genere) {
+        List<Libro> risultati = new ArrayList<>();
+        for (int i = 0; i < numlibri; i++) {
+            if (libri[i].getGenere().equalsIgnoreCase(genere)) {
+                risultati.add(libri[i]);
+            }
+        }
+        return risultati.toArray(new Libro[0]);
+    }
+
+    public Libro[] filtraPerStatoLettura(statolettura stato) {
+        List<Libro> risultati = new ArrayList<>();
+        for (int i = 0; i < numlibri; i++) {
+            if (libri[i].getL() == stato) {
+                risultati.add(libri[i]);
+            }
+        }
+        return risultati.toArray(new Libro[0]);
+    }
+    
+    public void caricaLibriDaFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            int index = 0;
+            
+            while ((line = reader.readLine()) != null && index < libri.length) {
+                String autore = line;
+                String genere = reader.readLine();
+                String isbn = reader.readLine();
+                String titolo = reader.readLine();
+                statolettura stato = statolettura.valueOf(reader.readLine());
+                valutazione val = valutazione.valueOf(reader.readLine());
+                
+                libri[index] = new Libro(titolo, autore, isbn, genere, val, stato);
+                index++;
+                numlibri = index;
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     
