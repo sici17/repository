@@ -1,5 +1,10 @@
 package libreria;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+
 public class Libro {
     
     private String titolo;
@@ -23,7 +28,13 @@ public class Libro {
         LETTURA,
         
     }
-    public Libro(String titolo, String autore, String iSBN, String genere, valutazione v, statolettura l) {
+    @JsonCreator
+    public Libro(@JsonProperty("titolo") String titolo, 
+                 @JsonProperty("autore") String autore, 
+                 @JsonProperty("ISBN") String iSBN, 
+                 @JsonProperty("genere") String genere, 
+                 @JsonProperty("valutazione") valutazione v, 
+                 @JsonProperty("statolettura") statolettura l) {
         super();
         this.titolo = titolo;
         this.autore = autore;
@@ -32,6 +43,7 @@ public class Libro {
         V = v;
         L = l;
     }
+    
     public String getTitolo() {
         return titolo;
     }
