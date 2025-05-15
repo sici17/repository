@@ -158,10 +158,9 @@ public class Libreria {
                 libri[i] = libri[i + 1];
             }
             numlibri--;
-            JOptionPane.showMessageDialog(null, "Libro eliminato con successo!");
             return true;
         } else {
-            JOptionPane.showMessageDialog(null, "Libro non trovato!");
+            
             return false;
         }
     }
