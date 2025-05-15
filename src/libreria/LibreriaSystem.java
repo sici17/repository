@@ -71,8 +71,7 @@ public class LibreriaSystem extends JFrame {
         
         
         
-        JComboBox<Libro.valutazione> valutazioneComboBox;
-        JComboBox<Libro.statolettura> statoLetturaComboBox;
+        
 
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridBagLayout());
@@ -119,12 +118,7 @@ public class LibreriaSystem extends JFrame {
         formConstraints.gridy = 2;
         formPanel.add(isbnTextField, formConstraints);
 
-        JLabel quantityLabel = new JLabel("Quantity:");
-        quantityLabel.setFont(new Font("Arial", Font.BOLD, 15));
-
-        formConstraints.gridx = 0;
-        formConstraints.gridy = 3;
-        formPanel.add(quantityLabel, formConstraints);
+       
 
         genereTextField = new JTextField();
         genereTextField.setPreferredSize(new Dimension(200, 25)); // Set preferred size for the text field
@@ -529,27 +523,41 @@ public class LibreriaSystem extends JFrame {
 
         
 
+     // Sostituisci l'action listener esistente del deleteButton con questo:
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String isbn = (JOptionPane.showInputDialog(null, "Enter the book ID to delete:"));
+                // Ottieni l'indice della riga selezionata
+                int selectedRowIndex = table.getSelectedRow();
 
-                boolean bookDeleted = bookShop.deleteBook(isbn);
-
-                if (bookDeleted) {
-                    JOptionPane.showMessageDialog(null, "Book deleted successfully!");
-
-                    // Remove the book from the table
-                    int rowIndex = findRowIndexByBookId(isbn);
-                    if (rowIndex != -1) {
-                        tableModel.removeRow(rowIndex);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Book not found!");
+                if (selectedRowIndex == -1) {
+                    JOptionPane.showMessageDialog(null, "Per favore, seleziona un libro da eliminare.");
+                    return;
                 }
 
-                clearTextFields();
+                // Ottieni l'ISBN dalla riga selezionata
+                String isbn = (String) tableModel.getValueAt(selectedRowIndex, 0);
+                
+                // Chiedi conferma prima dell'eliminazione
+                int confirm = JOptionPane.showConfirmDialog(null, 
+                        "Sei sicuro di voler eliminare il libro con ISBN: " + isbn + "?", 
+                        "Conferma eliminazione", 
+                        JOptionPane.YES_NO_OPTION);
+                        
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Elimina il libro dall'oggetto bookShop
+                    boolean bookDeleted = bookShop.deleteBook(isbn);
+                    
+                    if (bookDeleted) {
+                        // Rimuovi la riga dalla tabella
+                        tableModel.removeRow(selectedRowIndex);
+                        JOptionPane.showMessageDialog(null, "Libro eliminato con successo!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione del libro!");
+                    }
+                }
             }
         });
+        
      // Aggiungere questi action listener per i pulsanti di ricerca e reset
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
