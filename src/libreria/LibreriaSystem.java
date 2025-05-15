@@ -33,7 +33,6 @@ public class LibreriaSystem extends JFrame {
     private JTextField searchTextField;
     private JComboBox<String> searchTypeComboBox;
     private JComboBox<String> filterGenereComboBox;
-    private JComboBox<Libro.statolettura> filterStatoComboBox;
 
     private Libreria bookShop;
     private DefaultTableModel tableModel;
@@ -255,45 +254,6 @@ public class LibreriaSystem extends JFrame {
         }
         
         
-
-        
-        JButton closeButton = new JButton("Close");
-        closeButton.setPreferredSize(new Dimension(100, 30));
-        closeButton.setBackground(new Color(240, 240, 240));
-        closeButton.setForeground(Color.DARK_GRAY);
-
-        // Apply additional visual enhancements
-        closeButton.setFocusPainted(false);
-        closeButton.setBorder(
-                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(100, 100, 100), 2),
-                        BorderFactory.createEmptyBorder(8, 16, 8, 16)));
-        closeButton.setFont(closeButton.getFont().deriveFont(Font.BOLD, 12f));
-
-        // Add a hover effect
-        closeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                closeButton.setBackground(Color.RED);
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                closeButton.setBackground(new Color(240, 240, 240));
-            }
-        });
-        
-       
-
-
-        // Add an ActionListener to the "Close" button
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Close the window or exit the application
-                // You can replace this line with the necessary code to close the window
-                System.exit(0);
-            }
-        });
-
-        // Add the "Close" button to the button panel
-        buttonPanel.add(closeButton);
 
         // Table
         tableModel = new DefaultTableModel();
@@ -752,15 +712,7 @@ public class LibreriaSystem extends JFrame {
         statoLetturaComboBox.setSelectedIndex(0);
     }
 
-    private int findRowIndexByBookId(String isbn) {
-        for (int row = 0; row < tableModel.getRowCount(); row++) {
-            String id = (String)tableModel.getValueAt(row, 0);
-            if (id.equals(isbn)) {
-                return row;
-            }
-        }
-        return -1;
-    }
+    
 
     public static void main(String[] args) {
         LibreriaSystem bookManagementSystem = new LibreriaSystem();
