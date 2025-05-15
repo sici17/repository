@@ -1,12 +1,14 @@
 package libreria;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.CollectionType;
+
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -22,6 +24,11 @@ public class Libreria {
     public Libreria(int maxLibri, String path) {
         libri = new Libro[maxLibri];
         this.numlibri = 0;
+        
+        // Assicurati che il path termini con .json
+        if (!path.toLowerCase().endsWith(".json")) {
+            path = path.replaceAll("\\.[^.]*$", "") + ".json";
+        }
         this.path = path;
     }
     
@@ -33,17 +40,20 @@ public class Libreria {
     }
     
     public void salvalibriinfile() {
-        try (PrintWriter writer=new PrintWriter(new FileWriter(path))){
-            for(int i=0;i<numlibri;i++) {
-                writer.println(libri[i].getAutore());
-                writer.println(libri[i].getGenere());
-                writer.println(libri[i].getISBN());
-                writer.println(libri[i].getTitolo());
-                writer.println(libri[i].getL());
-                writer.println(libri[i].getV());
-            }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            
+            // Crea una lista dei libri esistenti per evitare valori null
+            List<Libro> libriList = Arrays.asList(getLibri());
+            
+            // Salva la lista nel file JSON
+            mapper.writeValue(new File(path), libriList);
+            
+            JOptionPane.showMessageDialog(null, "Libri salvati con successo nel file JSON!");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Errore durante il salvataggio dei libri: " + e.getMessage(), 
+                "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -106,36 +116,37 @@ public class Libreria {
     }
     
     public void caricaLibriDaFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            numlibri = 0;
+        File file = new File(path);
+        
+        // Se il file non esiste, non fare nulla
+        if (!file.exists()) {
+            return;
+        }
+        
+        try {
+            ObjectMapper mapper = new ObjectMapper();
             
-            while ((line = reader.readLine()) != null && numlibri < libri.length) {
-                String autore = line;
-                String genere = reader.readLine();
-                String isbn = reader.readLine();
-                String titolo = reader.readLine();
-                
-                // Gestione enumerazioni
-                statolettura stato;
-                try {
-                    stato = statolettura.valueOf(reader.readLine());
-                } catch (IllegalArgumentException e) {
-                    stato = statolettura.LEGGERE;  // Valore predefinito
+            // Definisci il tipo di collezione per la deserializzazione
+            CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, Libro.class);
+            
+            // Leggi la lista di libri dal file JSON
+            List<Libro> libriList = mapper.readValue(file, type);
+            
+            // Popola l'array di libri
+            numlibri = 0;
+            for (Libro libro : libriList) {
+                if (numlibri < libri.length) {
+                    libri[numlibri++] = libro;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Impossibile caricare tutti i libri. Capacità massima raggiunta.", 
+                        "Avviso", JOptionPane.WARNING_MESSAGE);
+                    break;
                 }
-                
-                valutazione val;
-                try {
-                    val = valutazione.valueOf(reader.readLine());
-                } catch (IllegalArgumentException e) {
-                    val = valutazione.BUONO;  // Valore predefinito
-                }
-                
-                libri[numlibri] = new Libro(titolo, autore, isbn, genere, val, stato);
-                numlibri++;
             }
+            
+            JOptionPane.showMessageDialog(null, "Caricati " + numlibri + " libri dal file JSON!");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Errore nel caricamento dei libri: " + e.getMessage(), 
+            JOptionPane.showMessageDialog(null, "Errore durante il caricamento dei libri: " + e.getMessage(), 
                 "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
