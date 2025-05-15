@@ -11,15 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class LibreriaSystem extends JFrame {
     /**
@@ -42,9 +39,8 @@ public class LibreriaSystem extends JFrame {
     private DefaultTableModel tableModel;
 
     public LibreriaSystem() {
-        this.bookShop = new Libreria(100, "C:\\Users\\franc\\Desktop\\libri.txt");
+        this.bookShop = new Libreria(100, "C:\\Users\\franc\\Desktop\\libri.json");
         this.bookShop.caricaLibriDaFile();
-        //aggiornaTabellaDaLibreria();
         int borderSize = 20;
         getRootPane().setBorder(BorderFactory.createEmptyBorder(borderSize, borderSize, borderSize, borderSize));
 
@@ -213,25 +209,33 @@ public class LibreriaSystem extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        JButton addButton = new JButton("Add Book");
+        JButton addButton = new JButton("Add");
         buttonPanel.add(addButton);
         
 
         JButton filterButton = new JButton("Filter");
         buttonPanel.add(filterButton);
-        
-       
 
         JButton deleteButton = new JButton("Delete");
         buttonPanel.add(deleteButton);
 
         JButton sortButton = new JButton("Sort");
         buttonPanel.add(sortButton);
-        JButton[] buttons = { addButton, filterButton, deleteButton, sortButton };
+        
+        JButton updateButton = new JButton("Update");
+        buttonPanel.add(updateButton);
+        
+        JButton SaveButton = new JButton("Save");
+        buttonPanel.add(SaveButton);
+        
+        
+        
+        
+        JButton[] buttons = { addButton, filterButton, deleteButton, sortButton,updateButton,SaveButton};
 
         for (JButton button : buttons) {
             button.setBackground(new Color(240, 240, 240));
-            button.setPreferredSize(new Dimension(105, 30));
+            button.setPreferredSize(new Dimension(80, 30));
             button.setForeground(Color.DARK_GRAY);
             button.setFocusPainted(false);
             button.setBorder(
@@ -249,29 +253,10 @@ public class LibreriaSystem extends JFrame {
                 }
             });
         }
+        
+        
 
-        JButton updateButton = new JButton("Update");
-        buttonPanel.add(updateButton);
-        updateButton.setBackground(new Color(240, 240, 240));
-        updateButton.setForeground(Color.DARK_GRAY);
-        updateButton.setPreferredSize(new Dimension(100, 30));
-        // Apply additional visual enhancements
-        updateButton.setFocusPainted(false);
-        updateButton.setBorder(
-                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(100, 100, 100), 2),
-                        BorderFactory.createEmptyBorder(8, 16, 8, 16)));
-        updateButton.setFont(updateButton.getFont().deriveFont(Font.BOLD, 12f));
-
-        // Add a hover effect
-        updateButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                updateButton.setBackground(new Color(220, 220, 220));
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                updateButton.setBackground(new Color(240, 240, 240));
-            }
-        });
+        
         JButton closeButton = new JButton("Close");
         closeButton.setPreferredSize(new Dimension(100, 30));
         closeButton.setBackground(new Color(240, 240, 240));
@@ -294,6 +279,9 @@ public class LibreriaSystem extends JFrame {
                 closeButton.setBackground(new Color(240, 240, 240));
             }
         });
+        
+       
+
 
         // Add an ActionListener to the "Close" button
         closeButton.addActionListener(new ActionListener() {
@@ -401,18 +389,57 @@ public class LibreriaSystem extends JFrame {
             }
         });
 
+     // Sostituisci l'action listener esistente del sortButton con questo:
         sortButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Sort the table data in ascending order based on the book titles
-                TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
-                sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER); // Sort the second column (title) in
-                                                                        // case-insensitive order
-                table.setRowSorter(sorter);
-                ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<>();
-                sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING)); // Sort the second column (title) in
-                                                                                // ascending order
-                sorter.setSortKeys(sortKeys);
-                sorter.sort();
+                // Crea un pannello per la selezione del criterio di ordinamento
+                JPanel sortPanel = new JPanel();
+                sortPanel.setLayout(new GridLayout(3, 1, 5, 5));
+                
+                // Titolo del pannello
+                JLabel titleLabel = new JLabel("Seleziona il criterio di ordinamento:");
+                titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+                sortPanel.add(titleLabel);
+                
+                // Opzioni di ordinamento
+                String[] sortOptions = {"Titolo (A-Z)", "Autore (A-Z)"};
+                JComboBox<String> sortCriteriaComboBox = new JComboBox<>(sortOptions);
+                sortPanel.add(sortCriteriaComboBox);
+                
+                // Mostra il dialog di selezione
+                int result = JOptionPane.showConfirmDialog(
+                    null, 
+                    sortPanel, 
+                    "Ordina libri", 
+                    JOptionPane.OK_CANCEL_OPTION, 
+                    JOptionPane.PLAIN_MESSAGE
+                );
+                
+                if (result == JOptionPane.OK_OPTION) {
+                    // Applica l'ordinamento in base alla selezione
+                    TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
+                    
+                    int columnIndex;
+                    if (sortCriteriaComboBox.getSelectedIndex() == 0) {
+                        // Ordina per titolo (colonna 1)
+                        columnIndex = 1;
+                        sorter.setComparator(columnIndex, String.CASE_INSENSITIVE_ORDER);
+                    } else {
+                        // Ordina per autore (colonna 2)
+                        columnIndex = 2;
+                        sorter.setComparator(columnIndex, String.CASE_INSENSITIVE_ORDER);
+                    }
+                    
+                    table.setRowSorter(sorter);
+                    ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<>();
+                    sortKeys.add(new RowSorter.SortKey(columnIndex, SortOrder.ASCENDING));
+                    sorter.setSortKeys(sortKeys);
+                    sorter.sort();
+                    
+                    // Mostra messaggio di conferma
+                    String criterio = (columnIndex == 1) ? "titolo" : "autore";
+                    JOptionPane.showMessageDialog(null, "Libri ordinati per " + criterio + " in ordine alfabetico.");
+                }
             }
         });
         
@@ -578,6 +605,12 @@ public class LibreriaSystem extends JFrame {
                 aggiornaTabellaDaLibreria();
             }
         });
+        
+        SaveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                bookShop.salvalibriinfile();
+            }
+        });
 
         updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -640,7 +673,12 @@ public class LibreriaSystem extends JFrame {
                 }
             }
         });
+        aggiornaTabellaDaLibreria();
+
+        
     }
+    
+    
 
  // Sostituire il metodo esistente con questa versione migliorata
     private void aggiornaTabellaDaLibreria() {
