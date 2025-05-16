@@ -14,6 +14,7 @@ import model.enums.Valutazione;
 public class LibreriaController {
     
     private final LibroDAO libroDAO;
+    private static LibreriaController instance=null;
     
     /**
      * Costruttore che inizializza il controller con un DAO.
@@ -21,9 +22,16 @@ public class LibreriaController {
      * @param capacitaMassima Capacità massima della libreria
      * @param percorsoFile Percorso del file per la persistenza
      */
-    public LibreriaController(int capacitaMassima, String percorsoFile) {
+    private  LibreriaController(int capacitaMassima, String percorsoFile) {
         this.libroDAO = new LibroDAOImpl(capacitaMassima, percorsoFile);
         caricaLibri();
+    }
+    
+    public static synchronized LibreriaController getInstance(int capacitaMassima, String percorsoFile) {
+        if (instance == null) {
+            instance = new LibreriaController(capacitaMassima, percorsoFile);
+        }
+        return instance;
     }
     
     /**
