@@ -3,8 +3,10 @@ package controller;
 import java.util.List;
 
 import model.Libro;
+import model.dao.JSONLibroDAOFactory;
 import model.dao.LibroDAO;
-import model.dao.LibroDAOImpl;
+import model.dao.LibroDAOFactory;
+import model.dao.XMLLibroDAOFactory;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
 
@@ -13,25 +15,55 @@ import model.enums.Valutazione;
  */
 public class LibreriaController {
     
+ // Tipi di persistenza supportati
+    public enum TipoPersistenza {
+        JSON,
+        XML
+    }
+    
     private final LibroDAO libroDAO;
     private static LibreriaController instance=null;
+    
+    
     
     /**
      * Costruttore che inizializza il controller con un DAO.
      * 
      * @param capacitaMassima Capacità massima della libreria
      * @param percorsoFile Percorso del file per la persistenza
+     * @param tipoPersistenza 
      */
-    private  LibreriaController(int capacitaMassima, String percorsoFile) {
-        this.libroDAO = new LibroDAOImpl(capacitaMassima, percorsoFile);
+    private  LibreriaController(int capacitaMassima, String percorsoFile, TipoPersistenza tipoPersistenza) {
+        
+        
+     // Crea la factory appropriata in base al tipo di persistenza
+        LibroDAOFactory factory;
+        switch (tipoPersistenza) {
+            case JSON:
+                factory = new JSONLibroDAOFactory();
+                break;
+            case XML:
+                factory = new XMLLibroDAOFactory();
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo di persistenza non supportato: " + tipoPersistenza);
+        }
+        
+        // Usa la factory per creare il DAO
+        this.libroDAO = factory.creaLibroDAO(capacitaMassima, percorsoFile);
+        
         caricaLibri();
     }
     
-    public static synchronized LibreriaController getInstance(int capacitaMassima, String percorsoFile) {
+    public static synchronized LibreriaController getInstance(int capacitaMassima, String percorsoFile,TipoPersistenza tipoPersistenza) {
         if (instance == null) {
-            instance = new LibreriaController(capacitaMassima, percorsoFile);
+            instance = new LibreriaController(capacitaMassima, percorsoFile, tipoPersistenza);
         }
         return instance;
+    }
+    
+    public static synchronized LibreriaController getInstance(int capacitaMassima, String percorsoFile) {
+        return getInstance(capacitaMassima, percorsoFile, TipoPersistenza.JSON);
     }
     
     /**
