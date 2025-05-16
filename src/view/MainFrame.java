@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
         };
         
         // Inizializzazione dei controller
-        LibreriaController libreriaController = new LibreriaController(100, percorsoFile);
+        LibreriaController libreriaController = LibreriaController.getInstance(100, percorsoFile);
         bookManagerController = new BookManagerController(libreriaController, tableModel);
         
         // Configurazione del frame
