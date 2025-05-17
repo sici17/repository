@@ -9,12 +9,15 @@ import model.accesslogic.LibroInt;
 import model.accesslogic.XMLLibroFactory;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
+import model.observer.LibreriaObserver;
+import model.observer.LibreriaObserver.TipoEvento;
+import model.observer.LibreriaSubject;
 import model.strategy.FiltroStrategy;
 
 /**
  * Controller che gestisce la logica di business dell'applicazione Libreria.
  */
-public class LibreriaController {
+public class LibreriaController extends LibreriaSubject {
     
  // Tipi di persistenza supportati
     public enum TipoPersistenza {
@@ -67,6 +70,30 @@ public class LibreriaController {
         return getInstance(capacitaMassima, percorsoFile, TipoPersistenza.JSON);
     }
     
+    
+    @Override
+    public void registraObserver(LibreriaObserver observer) {
+        if (observer != null && !observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+    
+    @Override
+    public void rimuoviObserver(LibreriaObserver observer) {
+        observers.remove(observer);
+    }
+    
+    @Override
+    public void notificaObserver(TipoEvento tipoEvento, Object dettagli) {
+        for (LibreriaObserver observer : observers) {
+            observer.aggiornamento(tipoEvento, dettagli);
+        }
+    }
+    
+    
+    
+    
+    
     /**
      * Aggiunge un nuovo libro alla libreria.
      * 
@@ -90,20 +117,16 @@ public class LibreriaController {
         }
         
         Libro libro1 = new Libro(titolo, autore, isbn, genere, valutazione, statoLettura);
-        return libro.aggiungiLibro(libro1);
+        boolean ret= libro.aggiungiLibro(libro1);
+        if(ret) {
+            notificaObserver(TipoEvento.LIBRO_AGGIUNTO, libro1);
+        }
+        return ret;
     }
     
-    /**
-     * Aggiorna i dati di un libro esistente.
-     * 
-     * @param titolo Nuovo titolo del libro
-     * @param autore Nuovo autore del libro
-     * @param isbn ISBN del libro (non modificabile)
-     * @param genere Nuovo genere del libro
-     * @param valutazione Nuova valutazione del libro
-     * @param statoLettura Nuovo stato di lettura del libro
-     * @return true se l'operazione ha successo, false altrimenti
-     */
+    
+    
+    
     public boolean aggiornaLibro(String titolo, String autore, String isbn, 
                                String genere, Valutazione valutazione, StatoLettura statoLettura) {
         if (titolo == null || autore == null || isbn == null || genere == null || 
@@ -116,7 +139,15 @@ public class LibreriaController {
         }
         
         Libro libro1 = new Libro(titolo, autore, isbn, genere, valutazione, statoLettura);
-        return libro.aggiornaLibro(libro1);
+        boolean result = libro.aggiornaLibro(libro1);
+        
+        if (result) {
+            // Notifica gli observer
+            notificaObserver(TipoEvento.LIBRO_AGGIORNATO, libro1);
+        }
+        
+        return result;
+        
     }
     
     /**
@@ -126,7 +157,14 @@ public class LibreriaController {
      * @return true se l'operazione ha successo, false altrimenti
      */
     public boolean eliminaLibro(String isbn) {
-        return libro.eliminaLibro(isbn);
+        boolean result = libro.eliminaLibro(isbn);
+        Libro libroDaEliminare = cercaLibroPerISBN(isbn);
+        if (result && libroDaEliminare != null) {
+            // Notifica gli observer
+            notificaObserver(TipoEvento.LIBRO_ELIMINATO, libroDaEliminare);
+        }
+        
+        return result;
     }
     
     /**
@@ -157,7 +195,9 @@ public class LibreriaController {
     
     
     public List<Libro> filtraLibri(FiltroStrategy filtro) {
+        notificaObserver(TipoEvento.FILTRO_APPLICATO, filtro);
         return libro.filtraLibri(filtro);
+        
     }
     
     public List<Libro> filtraPerGenere(String genere) {
@@ -178,7 +218,14 @@ public class LibreriaController {
      * @return true se l'operazione ha successo, false altrimenti
      */
     public boolean salvaLibri() {
-        return libro.salvaLibri();
+        boolean result = libro.salvaLibri();
+        
+        if (result) {
+            // Notifica gli observer
+            notificaObserver(TipoEvento.LIBRERIA_SALVATA, null);
+        }
+        
+        return result;
     }
     
     /**
@@ -187,7 +234,14 @@ public class LibreriaController {
      * @return true se l'operazione ha successo, false altrimenti
      */
     public boolean caricaLibri() {
-        return libro.caricaLibri();
+        boolean result = libro.caricaLibri();
+        
+        if (result) {
+            // Notifica gli observer
+            notificaObserver(TipoEvento.LIBRERIA_CARICATA, getTuttiLibri());
+        }
+        
+        return result;
     }
     
     /**
