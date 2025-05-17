@@ -145,7 +145,7 @@ public class SearchPanel extends JPanel {
         }
         
         // Esegui la ricerca
-        controller.ricercaLibri(testo, campo);
+        controller.setFiltroRicerca(testo, campo);
     }
     
     /**
@@ -153,6 +153,6 @@ public class SearchPanel extends JPanel {
      */
     private void resetRicerca() {
         searchTextField.setText("");
-        controller.aggiornaTabella();
+        controller.resetFiltri(); // Usa il nuovo metodo per resettare tutti i filtri
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.Libro;
 import model.enums.StatoLettura;
+import model.strategy.FiltroStrategy;
 
 /**
  * Interfaccia per le operazioni CRUD sui libri.
@@ -48,6 +49,9 @@ public interface LibroDAO {
      * @return La lista di tutti i libri
      */
     List<Libro> getTuttiLibri();
+    
+    
+    List<Libro> filtraLibri(FiltroStrategy filtro);
     
     /**
      * Filtra i libri per genere.

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -15,6 +14,10 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 
 import model.Libro;
 import model.enums.StatoLettura;
+import model.strategy.FiltroGenereStrategy;
+import model.strategy.FiltroRicerca;
+import model.strategy.FiltroStatoLetturaStrategy;
+import model.strategy.FiltroStrategy;
 import util.Constants;
 import util.FileUtils;
 
@@ -110,54 +113,31 @@ public class LibroDAOImpl implements LibroDAO {
     }
     
     @Override
-    public List<Libro> filtraPerGenere(String genere) {
-        if (genere == null || genere.isEmpty() || genere.equals(Constants.FILTER_ALL)) {
+    public List<Libro> filtraLibri(FiltroStrategy filtro) {
+        if (filtro == null) {
             return getTuttiLibri();
         }
         
-        return libri.stream()
-                .filter(l -> l.getGenere().equalsIgnoreCase(genere))
-                .collect(Collectors.toList());
+        return filtro.filtra(libri);
+    }
+    
+    // Mantenere i vecchi metodi di filtro per compatibilità
+    @Override
+    public List<Libro> filtraPerGenere(String genere) {
+        FiltroStrategy filtro = new FiltroGenereStrategy(genere);
+        return filtraLibri(filtro);
     }
     
     @Override
     public List<Libro> filtraPerStatoLettura(StatoLettura statoLettura) {
-        if (statoLettura == null) {
-            return getTuttiLibri();
-        }
-        
-        return libri.stream()
-                .filter(l -> l.getStatoLettura() == statoLettura)
-                .collect(Collectors.toList());
+        FiltroStrategy filtro = new FiltroStatoLetturaStrategy(statoLettura);
+        return filtraLibri(filtro);
     }
     
     @Override
     public List<Libro> ricercaLibri(String testo, String campo) {
-        if (testo == null || testo.isEmpty()) {
-            return getTuttiLibri();
-        }
-        
-        String testoLowerCase = testo.toLowerCase();
-        
-        switch (campo) {
-            case Constants.SEARCH_FIELD_TITLE:
-                return libri.stream()
-                        .filter(l -> l.getTitolo().toLowerCase().contains(testoLowerCase))
-                        .collect(Collectors.toList());
-                
-            case Constants.SEARCH_FIELD_AUTHOR:
-                return libri.stream()
-                        .filter(l -> l.getAutore().toLowerCase().contains(testoLowerCase))
-                        .collect(Collectors.toList());
-                
-            case Constants.SEARCH_FIELD_ISBN:
-                return libri.stream()
-                        .filter(l -> l.getIsbn().toLowerCase().contains(testoLowerCase))
-                        .collect(Collectors.toList());
-                
-            default:
-                return getTuttiLibri();
-        }
+        FiltroStrategy filtro = new FiltroRicerca(testo, campo);
+        return filtraLibri(filtro);
     }
     
     @Override
@@ -213,6 +193,8 @@ public class LibroDAOImpl implements LibroDAO {
             return false;
         }
     }
+    
+    
     
     @Override
     public int getNumeroLibri() {

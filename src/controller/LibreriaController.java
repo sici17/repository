@@ -9,6 +9,7 @@ import model.dao.LibroDAOFactory;
 import model.dao.XMLLibroDAOFactory;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
+import model.strategy.FiltroStrategy;
 
 /**
  * Controller che gestisce la logica di business dell'applicazione Libreria.
@@ -153,27 +154,20 @@ public class LibreriaController {
      * @param genere Il genere da filtrare
      * @return La lista dei libri filtrati
      */
+    
+    
+    public List<Libro> filtraLibri(FiltroStrategy filtro) {
+        return libroDAO.filtraLibri(filtro);
+    }
+    
     public List<Libro> filtraPerGenere(String genere) {
         return libroDAO.filtraPerGenere(genere);
     }
     
-    /**
-     * Filtra i libri per stato di lettura.
-     * 
-     * @param statoLettura Lo stato di lettura da filtrare
-     * @return La lista dei libri filtrati
-     */
     public List<Libro> filtraPerStatoLettura(StatoLettura statoLettura) {
         return libroDAO.filtraPerStatoLettura(statoLettura);
     }
     
-    /**
-     * Ricerca libri per titolo, autore o ISBN.
-     * 
-     * @param testo Il testo da cercare
-     * @param campo Il campo su cui effettuare la ricerca (titolo, autore, isbn)
-     * @return La lista dei libri che corrispondono alla ricerca
-     */
     public List<Libro> ricercaLibri(String testo, String campo) {
         return libroDAO.ricercaLibri(testo, campo);
     }

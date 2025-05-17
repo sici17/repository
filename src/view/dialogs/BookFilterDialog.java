@@ -180,25 +180,18 @@ public class BookFilterDialog extends JDialog {
         String genereSelezionato = (String) genereComboBox.getSelectedItem();
         String statoSelezionato = (String) statoLetturaComboBox.getSelectedItem();
         
-        if (genereSelezionato.equals(Constants.FILTER_ALL) && statoSelezionato.equals(Constants.FILTER_ALL)) {
-            // Nessun filtro, mostra tutti i libri
-            controller.aggiornaTabella();
-        } else if (!genereSelezionato.equals(Constants.FILTER_ALL) && statoSelezionato.equals(Constants.FILTER_ALL)) {
-            // Filtra solo per genere
-            controller.filtraPerGenere(genereSelezionato);
-        } else if (genereSelezionato.equals(Constants.FILTER_ALL) && !statoSelezionato.equals(Constants.FILTER_ALL)) {
-            // Filtra solo per stato di lettura
-            StatoLettura stato = StatoLettura.valueOf(statoSelezionato);
-            controller.filtraPerStatoLettura(stato);
-        } else {
-            // Filtra per genere e stato di lettura (applicazione a cascata)
-            // In questo caso, filtra prima per genere
-            controller.filtraPerGenere(genereSelezionato);
-            // e poi rifiltra questi risultati per stato di lettura
-            // Questo richiederebbe una nuova implementazione nel controller
-            // Per ora, applichiamo solo il filtro per genere
-            controller.filtraPerGenere(genereSelezionato);
+        StatoLettura statoLettura = null;
+        if (!statoSelezionato.equals(Constants.FILTER_ALL)) {
+            for (StatoLettura stato : StatoLettura.values()) {
+                if (stato.toString().equals(statoSelezionato)) {
+                    statoLettura = stato;
+                    break;
+                }
+            }
         }
+        
+        // Usa il nuovo metodo per impostare il filtro composto
+        controller.setFiltroComposto(genereSelezionato, statoLettura);
         
         dispose();
     }
