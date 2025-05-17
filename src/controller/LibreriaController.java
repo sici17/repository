@@ -3,10 +3,10 @@ package controller;
 import java.util.List;
 
 import model.Libro;
-import model.dao.JSONLibroDAOFactory;
-import model.dao.LibroDAO;
-import model.dao.LibroDAOFactory;
-import model.dao.XMLLibroDAOFactory;
+import model.accesslogic.JSONLibroFactory;
+import model.accesslogic.LibroFactory;
+import model.accesslogic.LibroInt;
+import model.accesslogic.XMLLibroFactory;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
 import model.strategy.FiltroStrategy;
@@ -22,13 +22,13 @@ public class LibreriaController {
         XML
     }
     
-    private final LibroDAO libroDAO;
+    private final LibroInt libro;
     private static LibreriaController instance=null;
     
     
     
     /**
-     * Costruttore che inizializza il controller con un DAO.
+     * Costruttore che inizializza il controller.
      * 
      * @param capacitaMassima Capacità massima della libreria
      * @param percorsoFile Percorso del file per la persistenza
@@ -38,20 +38,20 @@ public class LibreriaController {
         
         
      // Crea la factory appropriata in base al tipo di persistenza
-        LibroDAOFactory factory;
+        LibroFactory factory;
         switch (tipoPersistenza) {
             case JSON:
-                factory = new JSONLibroDAOFactory();
+                factory = new JSONLibroFactory();
                 break;
             case XML:
-                factory = new XMLLibroDAOFactory();
+                factory = new XMLLibroFactory();
                 break;
             default:
                 throw new IllegalArgumentException("Tipo di persistenza non supportato: " + tipoPersistenza);
         }
         
-        // Usa la factory per creare il DAO
-        this.libroDAO = factory.creaLibroDAO(capacitaMassima, percorsoFile);
+        
+        this.libro = factory.creaLibro(capacitaMassima, percorsoFile);
         
         caricaLibri();
     }
@@ -89,8 +89,8 @@ public class LibreriaController {
             return false;
         }
         
-        Libro libro = new Libro(titolo, autore, isbn, genere, valutazione, statoLettura);
-        return libroDAO.aggiungiLibro(libro);
+        Libro libro1 = new Libro(titolo, autore, isbn, genere, valutazione, statoLettura);
+        return libro.aggiungiLibro(libro1);
     }
     
     /**
@@ -115,8 +115,8 @@ public class LibreriaController {
             return false;
         }
         
-        Libro libro = new Libro(titolo, autore, isbn, genere, valutazione, statoLettura);
-        return libroDAO.aggiornaLibro(libro);
+        Libro libro1 = new Libro(titolo, autore, isbn, genere, valutazione, statoLettura);
+        return libro.aggiornaLibro(libro1);
     }
     
     /**
@@ -126,7 +126,7 @@ public class LibreriaController {
      * @return true se l'operazione ha successo, false altrimenti
      */
     public boolean eliminaLibro(String isbn) {
-        return libroDAO.eliminaLibro(isbn);
+        return libro.eliminaLibro(isbn);
     }
     
     /**
@@ -136,7 +136,7 @@ public class LibreriaController {
      * @return Il libro trovato o null se non esiste
      */
     public Libro cercaLibroPerISBN(String isbn) {
-        return libroDAO.cercaLibroPerISBN(isbn);
+        return libro.cercaLibroPerISBN(isbn);
     }
     
     /**
@@ -145,7 +145,7 @@ public class LibreriaController {
      * @return La lista di tutti i libri
      */
     public List<Libro> getTuttiLibri() {
-        return libroDAO.getTuttiLibri();
+        return libro.getTuttiLibri();
     }
     
     /**
@@ -157,19 +157,19 @@ public class LibreriaController {
     
     
     public List<Libro> filtraLibri(FiltroStrategy filtro) {
-        return libroDAO.filtraLibri(filtro);
+        return libro.filtraLibri(filtro);
     }
     
     public List<Libro> filtraPerGenere(String genere) {
-        return libroDAO.filtraPerGenere(genere);
+        return libro.filtraPerGenere(genere);
     }
     
     public List<Libro> filtraPerStatoLettura(StatoLettura statoLettura) {
-        return libroDAO.filtraPerStatoLettura(statoLettura);
+        return libro.filtraPerStatoLettura(statoLettura);
     }
     
     public List<Libro> ricercaLibri(String testo, String campo) {
-        return libroDAO.ricercaLibri(testo, campo);
+        return libro.ricercaLibri(testo, campo);
     }
     
     /**
@@ -178,7 +178,7 @@ public class LibreriaController {
      * @return true se l'operazione ha successo, false altrimenti
      */
     public boolean salvaLibri() {
-        return libroDAO.salvaLibri();
+        return libro.salvaLibri();
     }
     
     /**
@@ -187,7 +187,7 @@ public class LibreriaController {
      * @return true se l'operazione ha successo, false altrimenti
      */
     public boolean caricaLibri() {
-        return libroDAO.caricaLibri();
+        return libro.caricaLibri();
     }
     
     /**
@@ -196,6 +196,6 @@ public class LibreriaController {
      * @return Il numero di libri
      */
     public int getNumeroLibri() {
-        return libroDAO.getNumeroLibri();
+        return libro.getNumeroLibri();
     }
 }
