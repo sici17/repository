@@ -20,9 +20,9 @@ import model.enums.StatoLettura;
 import model.enums.Valutazione;
 import util.Constants;
 
-/**
- * Pannello per l'input dei dati di un libro.
- */
+
+ // pannello per l'input dei dati di un libro.
+ 
 public class BookFormPanel extends JPanel {
     
     private static final long serialVersionUID = 1L;
@@ -36,43 +36,39 @@ public class BookFormPanel extends JPanel {
     private final JComboBox<String> genreComboBox = new JComboBox<>(Constants.GENERI_PREDEFINITI);
     private final BookManagerController controller;
     
-    /**
-     * Costruttore che inizializza il pannello.
-     * 
-     * @param controller Il controller per la gestione dei libri
-     */
+    
+    
+    
     public BookFormPanel(BookManagerController controller) {
         this.controller = controller;
         
-        // Configurazione del pannello
+        // configurazione del pannello
         setLayout(new GridBagLayout());
         setBorder(javax.swing.BorderFactory.createTitledBorder("Dati Libro"));
         
-        // Inizializzazione delle constraints per il GridBagLayout
+        // inizializzazione delle constraints per il GridBagLayout
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 5, 5, 5);
         
-        // Titolo
+        // titolo
         JLabel titleLabel = new JLabel("Titolo:");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 15));
         c.gridx = 0;
         c.gridy = 0;
-        add(titleLabel, c);
-        
+        add(titleLabel, c);       
         titleTextField = new JTextField();
         titleTextField.setPreferredSize(new Dimension(Constants.TEXT_FIELD_WIDTH, Constants.TEXT_FIELD_HEIGHT));
         c.gridx = 1;
         c.gridy = 0;
         add(titleTextField, c);
         
-        // Autore
+        // autore
         JLabel authorLabel = new JLabel("Autore:");
         authorLabel.setFont(new Font("Arial", Font.BOLD, 15));
         c.gridx = 0;
         c.gridy = 1;
-        add(authorLabel, c);
-        
+        add(authorLabel, c);       
         authorTextField = new JTextField();
         authorTextField.setPreferredSize(new Dimension(Constants.TEXT_FIELD_WIDTH, Constants.TEXT_FIELD_HEIGHT));
         c.gridx = 1;
@@ -84,27 +80,26 @@ public class BookFormPanel extends JPanel {
         isbnLabel.setFont(new Font("Arial", Font.BOLD, 15));
         c.gridx = 0;
         c.gridy = 2;
-        add(isbnLabel, c);
-        
+        add(isbnLabel, c);    
         isbnTextField = new JTextField();
         isbnTextField.setPreferredSize(new Dimension(Constants.TEXT_FIELD_WIDTH, Constants.TEXT_FIELD_HEIGHT));
         c.gridx = 1;
         c.gridy = 2;
         add(isbnTextField, c);
         
-        // Genere
+        // genere
         JLabel genreLabel = new JLabel("Genere:");
         genreLabel.setFont(new Font("Arial", Font.BOLD, 15));
         c.gridx = 0;
         c.gridy = 3;
         add(genreLabel, c);
-        
-        // Utilizziamo una ComboBox invece di un TextField per il genere
+    
+        // utilizziamo una ComboBox invece di un TextField per il genere
         genreTextField = new JTextField();
         genreTextField.setVisible(false); // Nascondiamo il campo di testo
         
         JComboBox<String> genreComboBox = new JComboBox<>(Constants.GENERI_PREDEFINITI);
-        // Impostiamo il primo genere come default
+        // impostiamo il primo genere come default
         genreComboBox.setSelectedIndex(0);
         genreTextField.setText((String) genreComboBox.getSelectedItem());
         
@@ -120,33 +115,31 @@ public class BookFormPanel extends JPanel {
         c.gridy = 3;
         add(genreComboBox, c);
         
-        // Valutazione
+        // valutazione
         JLabel ratingLabel = new JLabel("Valutazione:");
         ratingLabel.setFont(new Font("Arial", Font.BOLD, 15));
         c.gridx = 0;
         c.gridy = 4;
-        add(ratingLabel, c);
-        
+        add(ratingLabel, c);       
         ratingComboBox = new JComboBox<>(Valutazione.values());
         ratingComboBox.setPreferredSize(new Dimension(Constants.TEXT_FIELD_WIDTH, Constants.TEXT_FIELD_HEIGHT));
         c.gridx = 1;
         c.gridy = 4;
         add(ratingComboBox, c);
         
-        // Stato di lettura
+        // stato di lettura
         JLabel readingStatusLabel = new JLabel("Stato Lettura:");
         readingStatusLabel.setFont(new Font("Arial", Font.BOLD, 15));
         c.gridx = 0;
         c.gridy = 5;
-        add(readingStatusLabel, c);
-        
+        add(readingStatusLabel, c);   
         readingStatusComboBox = new JComboBox<>(StatoLettura.values());
         readingStatusComboBox.setPreferredSize(new Dimension(Constants.TEXT_FIELD_WIDTH, Constants.TEXT_FIELD_HEIGHT));
         c.gridx = 1;
         c.gridy = 5;
         add(readingStatusComboBox, c);
         
-        // Pulsante Aggiungi
+        // pulsante Aggiungi
         JButton addButton = createStyledButton("Aggiungi");
         c.gridx = 0;
         c.gridy = 6;
@@ -154,13 +147,13 @@ public class BookFormPanel extends JPanel {
         c.anchor = GridBagConstraints.CENTER;
         add(addButton, c);
         
-        // Pulsante Pulisci
+        // pulsante Pulisci
         JButton clearButton = createStyledButton("Pulisci");
         c.gridx = 0;
         c.gridy = 7;
         add(clearButton, c);
         
-        // Aggiunta degli action listener
+        // aggiunta degli action listener
         
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -177,12 +170,7 @@ public class BookFormPanel extends JPanel {
         });
     }
     
-    /**
-     * Crea un pulsante con stile personalizzato.
-     * 
-     * @param text Il testo del pulsante
-     * @return Il pulsante creato
-     */
+    
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         
@@ -211,9 +199,7 @@ public class BookFormPanel extends JPanel {
         return button;
     }
     
-    /**
-     * Aggiunge un libro utilizzando i dati inseriti nel form.
-     */
+   
     private void aggiungiLibro() {
         String titolo = titleTextField.getText();
         String autore = authorTextField.getText();
@@ -224,13 +210,11 @@ public class BookFormPanel extends JPanel {
         
         controller.aggiungiLibro(titolo, autore, isbn, genere, valutazione, statoLettura);
         
-        // Pulisci i campi dopo l'aggiunta
+        // pulisci i campi dopo l'aggiunta
         pulisciCampi();
     }
     
-    /**
-     * Pulisce tutti i campi del form.
-     */
+   
     private void pulisciCampi() {
         titleTextField.setText("");
         authorTextField.setText("");
@@ -239,17 +223,7 @@ public class BookFormPanel extends JPanel {
         ratingComboBox.setSelectedIndex(0);
         readingStatusComboBox.setSelectedIndex(0);
     }
-    
-    /**
-     * Imposta i campi del form con i dati di un libro.
-     * 
-     * @param titolo Titolo del libro
-     * @param autore Autore del libro
-     * @param isbn ISBN del libro
-     * @param genere Genere del libro
-     * @param valutazione Valutazione del libro
-     * @param statoLettura Stato di lettura del libro
-     */
+  
     public void impostaLibro(String titolo, String autore, String isbn, 
                            String genere, Valutazione valutazione, StatoLettura statoLettura) {
         titleTextField.setText(titolo);

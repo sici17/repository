@@ -21,9 +21,9 @@ import model.strategy.FiltroStrategy;
 import util.Constants;
 import util.FileUtils;
 
-/**
- * Implementazione dell'interfaccia  che utilizza JSON per la persistenza.
- */
+
+ //implementazione dell'interfaccia  che utilizza json per la persistenza.
+ 
 public class LibroImpl implements LibroInt {
     
     private final List<Libro> libri;
@@ -35,8 +35,7 @@ public class LibroImpl implements LibroInt {
     public LibroImpl(int capacitaMassima, String percorsoFile) {
         this.libri = new ArrayList<>();
         this.capacitaMassima = capacitaMassima;
-        this.percorsoFile = FileUtils.assicuraEstensioneJson(percorsoFile);
-        
+        this.percorsoFile = FileUtils.assicuraEstensioneJson(percorsoFile);      
         this.mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
@@ -46,7 +45,6 @@ public class LibroImpl implements LibroInt {
         if (libro == null) {
             return false;
         }
-        
         if (libri.size() >= capacitaMassima) {
             JOptionPane.showMessageDialog(null, 
                     "Capacità massima raggiunta. Impossibile aggiungere altri libri.", 
@@ -115,8 +113,7 @@ public class LibroImpl implements LibroInt {
         
         return filtro.filtra(libri);
     }
-    
-    // Mantenere i vecchi metodi di filtro per compatibilità
+    // mantenere i vecchi metodi di filtro per compatibilità
     @Override
     public List<Libro> filtraPerGenere(String genere) {
         FiltroStrategy filtro = new FiltroGenereStrategy(genere);
@@ -160,16 +157,16 @@ public class LibroImpl implements LibroInt {
         }
         
         try {
-            // Definisci il tipo di collezione per la deserializzazione
+            // tipo per la deserializazzione
             CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, Libro.class);
             
-            // Leggi la lista di libri dal file JSON
+            // l la lista di libri dal file JSON
             List<Libro> libriCaricati = mapper.readValue(file, type);
             
-            // Pulisci la lista corrente e aggiungi i libri caricati
+            // pulisci la lista corrente e aggiungi i libri caricati
             libri.clear();
             
-            // Verifica se si supera la capacità massima
+            // verifica se si supera la capacità massima
             if (libriCaricati.size() > capacitaMassima) {
                 JOptionPane.showMessageDialog(null, 
                         "Impossibile caricare tutti i libri. Capacità massima raggiunta.", 
@@ -188,9 +185,6 @@ public class LibroImpl implements LibroInt {
             return false;
         }
     }
-    
-    
-    
     @Override
     public int getNumeroLibri() {
         return libri.size();

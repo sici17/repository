@@ -13,28 +13,18 @@ import model.Libro;
 public class FiltroCombinato implements FiltroStrategy {
     
     private final List<FiltroStrategy> filtri;
-    
-    /**
-     * Costruttore per inizializzare il filtro composto.
-     */
+  
     public FiltroCombinato() {
         this.filtri = new ArrayList<>();
     }
     
-    /**
-     * Aggiunge un filtro alla composizione.
-     * 
-     * @param filtro Il filtro da aggiungere
-     */
+    
     public void aggiungiFiltro(FiltroStrategy filtro) {
         if (filtro != null) {
             filtri.add(filtro);
         }
     }
-    
-    /**
-     * Rimuove tutti i filtri dalla composizione.
-     */
+   
     public void clearFiltri() {
         filtri.clear();
     }
@@ -47,7 +37,7 @@ public class FiltroCombinato implements FiltroStrategy {
         
         List<Libro> risultato = new ArrayList<>(libri);
         
-        // Applica sequenzialmente tutti i filtri
+        // applica sequenzialmente tutti i filtri
         for (FiltroStrategy filtro : filtri) {
             risultato = filtro.filtra(risultato);
         }
@@ -55,20 +45,5 @@ public class FiltroCombinato implements FiltroStrategy {
         return risultato;
     }
     
-    @Override
-    public String getDescrizioneFiltro() {
-        if (filtri.isEmpty()) {
-            return "Nessun filtro applicato";
-        }
-        
-        StringBuilder descrizione = new StringBuilder("Filtri: ");
-        for (int i = 0; i < filtri.size(); i++) {
-            if (i > 0) {
-                descrizione.append(", ");
-            }
-            descrizione.append(filtri.get(i).getDescrizioneFiltro());
-        }
-        
-        return descrizione.toString();
-    }
+    
 }

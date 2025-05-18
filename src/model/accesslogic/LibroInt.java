@@ -13,10 +13,10 @@ public interface LibroInt {
     
     boolean aggiungiLibro(Libro libro);
     
-   
-    
     
     boolean aggiornaLibro(Libro libro);
+    
+    
     
     
     
@@ -29,15 +29,12 @@ public interface LibroInt {
     Libro cercaLibroPerISBN(String isbn);
     
    
-    
-    
     List<Libro> getTuttiLibri();
     
     
     List<Libro> filtraLibri(FiltroStrategy filtro);
     
-  
-    
+   
     
     List<Libro> filtraPerGenere(String genere);
     
@@ -54,8 +51,10 @@ public interface LibroInt {
    
     
     
+    
+    
+    
     boolean salvaLibri();
-   
     
     
     boolean caricaLibri();

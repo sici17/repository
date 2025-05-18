@@ -7,18 +7,12 @@ import java.util.stream.Collectors;
 import model.Libro;
 import model.enums.StatoLettura;
 
-/**
- * Strategia di filtro basata sullo stato di lettura del libro.
- */
+
+  //Strategia di filtro basata sullo stato di lettura del libro.
+ 
 public class FiltroStatoLetturaStrategy implements FiltroStrategy {
     
     private final StatoLettura statoLettura;
-    
-    /**
-     * Costruttore per inizializzare il filtro per stato di lettura.
-     * 
-     * @param statoLettura Lo stato di lettura da filtrare
-     */
     public FiltroStatoLetturaStrategy(StatoLettura statoLettura) {
         this.statoLettura = statoLettura;
     }
@@ -34,11 +28,5 @@ public class FiltroStatoLetturaStrategy implements FiltroStrategy {
                 .collect(Collectors.toList());
     }
     
-    @Override
-    public String getDescrizioneFiltro() {
-        if (statoLettura == null) {
-            return "Tutti gli stati di lettura";
-        }
-        return "Stato di lettura: " + statoLettura.getDescrizione();
-    }
+   
 }

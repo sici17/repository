@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import model.Libro;
-import util.Constants;
 
 /**
  * Strategia di filtro basata sul genere del libro.
@@ -26,7 +25,7 @@ public class FiltroGenereStrategy implements FiltroStrategy {
     
     @Override
     public List<Libro> filtra(List<Libro> libri) {
-        if (genere == null || genere.isEmpty() || genere.equals(Constants.FILTER_ALL)) {
+        if (genere == null || genere.isEmpty() || genere.equals("tutti")) {
             return new ArrayList<>(libri);
         }
         
@@ -35,11 +34,5 @@ public class FiltroGenereStrategy implements FiltroStrategy {
                 .collect(Collectors.toList());
     }
     
-    @Override
-    public String getDescrizioneFiltro() {
-        if (genere == null || genere.isEmpty() || genere.equals(Constants.FILTER_ALL)) {
-            return "Tutti i generi";
-        }
-        return "Genere: " + genere;
-    }
+    
 }

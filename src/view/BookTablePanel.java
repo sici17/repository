@@ -21,9 +21,9 @@ import util.Constants;
 import view.dialogs.BookFilterDialog;
 import view.dialogs.BookUpdateDialog;
 
-/**
- * Pannello che contiene la tabella dei libri e i relativi pulsanti di azione.
- */
+
+ // pannello che contiene la tabella dei libri e i relativi pulsanti di azione.
+ 
 public class BookTablePanel extends JPanel {
     
     private static final long serialVersionUID = 1L;
@@ -32,45 +32,41 @@ public class BookTablePanel extends JPanel {
     private final BookManagerController controller;
     private String selectedISBN = null;
     
-    /**
-     * Costruttore che inizializza il pannello.
-     * 
-     * @param table La tabella dei libri
-     * @param controller Il controller per la gestione dei libri
-     */
+    
+    
     public BookTablePanel(JTable table, BookManagerController controller) {
         this.table = table;
         this.controller = controller;
         
-        // Configurazione del pannello
+        // configurazione del pannello
         setLayout(new BorderLayout());
         
-        // Aggiunta della tabella con scrollbar
+        // aggiunta della tabella con scrollbar
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
         
-        // Creazione del pannello per i pulsanti
+        // creazione del pannello per i pulsanti
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         
-        // Creazione dei pulsanti
+        // creazione dei pulsanti
         JButton updateButton = createStyledButton("Modifica");
         JButton deleteButton = createStyledButton("Elimina");
         JButton filterButton = createStyledButton("Filtra");
         JButton sortButton = createStyledButton("Ordina");
         JButton saveButton = createStyledButton("Salva");
         
-        // Aggiunta dei pulsanti al pannello
+        // aggiunta dei pulsanti al pannello
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(filterButton);
         buttonPanel.add(sortButton);
         buttonPanel.add(saveButton);
         
-        // Aggiunta del pannello dei pulsanti nella parte inferiore
+        // aggiunta del pannello dei pulsanti nella parte inferiore
         add(buttonPanel, BorderLayout.SOUTH);
         
-        // Configurazione del listener per la selezione nella tabella
+        // configurazione del listener per la selezione nella tabella
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -86,7 +82,7 @@ public class BookTablePanel extends JPanel {
             }
         });
         
-        // Configurazione degli action listener per i pulsanti
+        // configurazione degli action listener per i pulsanti
         
         updateButton.addActionListener(new ActionListener() {
             @Override
@@ -124,12 +120,7 @@ public class BookTablePanel extends JPanel {
         });
     }
     
-    /**
-     * Crea un pulsante con stile personalizzato.
-     * 
-     * @param text Il testo del pulsante
-     * @return Il pulsante creato
-     */
+   
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         
@@ -158,9 +149,7 @@ public class BookTablePanel extends JPanel {
         return button;
     }
     
-    /**
-     * Apre la dialog per aggiornare il libro selezionato.
-     */
+    
     private void aggiornaLibroSelezionato() {
         if (selectedISBN == null) {
             javax.swing.JOptionPane.showMessageDialog(this, Constants.MSG_SELECT_BOOK);
@@ -174,9 +163,7 @@ public class BookTablePanel extends JPanel {
         }
     }
     
-    /**
-     * Elimina il libro selezionato.
-     */
+    
     private void eliminaLibroSelezionato() {
         if (selectedISBN == null) {
             javax.swing.JOptionPane.showMessageDialog(this, Constants.MSG_SELECT_BOOK);
@@ -185,18 +172,13 @@ public class BookTablePanel extends JPanel {
         
         controller.eliminaLibro(selectedISBN);
     }
-    
-    /**
-     * Apre la dialog per filtrare i libri.
-     */
+   
     private void apriDialogFiltro() {
         BookFilterDialog dialog = new BookFilterDialog(this, controller);
         dialog.setVisible(true);
     }
     
-    /**
-     * Apre la dialog per ordinare la tabella.
-     */
+    
     private void ordinaTabella() {
         String[] opzioni = {"Titolo (A-Z)", "Autore (A-Z)"};
         
@@ -213,14 +195,14 @@ public class BookTablePanel extends JPanel {
             int columnIndex;
             
             if (scelta.equals(opzioni[0])) {
-                // Ordina per titolo (colonna 1)
+                // ordina per titolo (colonna 1)
                 columnIndex = 1;
             } else {
-                // Ordina per autore (colonna 2)
+                // ordina per autore (colonna 2)
                 columnIndex = 2;
             }
             
-            // Ordina la tabella
+            // ordina la tabella
             javax.swing.table.TableRowSorter<javax.swing.table.TableModel> sorter = 
                     new javax.swing.table.TableRowSorter<>(table.getModel());
             
@@ -234,7 +216,7 @@ public class BookTablePanel extends JPanel {
             sorter.setSortKeys(sortKeys);
             sorter.sort();
             
-            // Mostra messaggio di conferma
+            // mostra messaggio di conferma
             String criterio = (columnIndex == 1) ? "titolo" : "autore";
             javax.swing.JOptionPane.showMessageDialog(this, 
                     "Libri ordinati per " + criterio + " in ordine alfabetico.");

@@ -2,7 +2,7 @@ package model.accesslogic;
 
 
 
-  //Interfaccia per il Factory Method che crea istanze 
+  //interfaccia per il Factory Method che crea istanze 
  
 public interface LibroFactory {
     

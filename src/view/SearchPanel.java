@@ -15,9 +15,9 @@ import javax.swing.JTextField;
 import controller.BookManagerController;
 import util.Constants;
 
-/**
- * Pannello di ricerca per la libreria.
- */
+
+ // Pannello di ricerca per la libreria.
+ 
 public class SearchPanel extends JPanel {
     
     private static final long serialVersionUID = 1L;
@@ -26,45 +26,41 @@ public class SearchPanel extends JPanel {
     private final JComboBox<String> searchTypeComboBox;
     private final BookManagerController controller;
     
-    /**
-     * Costruttore che inizializza il pannello di ricerca.
-     * 
-     * @param controller Il controller per la gestione dei libri
-     */
+    
     public SearchPanel(BookManagerController controller) {
         this.controller = controller;
         
-        // Configurazione del pannello
+        // configurazione del pannello
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         
-        // Etichetta per la ricerca
+        // etichetta per la ricerca
         JLabel searchLabel = new JLabel("Cerca:");
         searchLabel.setFont(new Font("Arial", Font.BOLD, 15));
         add(searchLabel);
         
-        // Campo di testo per la ricerca
+        // campo di testo per la ricerca
         searchTextField = new JTextField();
         searchTextField.setPreferredSize(new Dimension(200, 25));
         add(searchTextField);
         
-        // Etichetta per il tipo di ricerca
+        // etichetta per il tipo di ricerca
         JLabel searchTypeLabel = new JLabel("Per:");
         searchTypeLabel.setFont(new Font("Arial", Font.BOLD, 15));
         add(searchTypeLabel);
         
-        // ComboBox per il tipo di ricerca
+        // comboBox per il tipo di ricerca
         searchTypeComboBox = new JComboBox<>(new String[]{"Titolo", "Autore", "ISBN"});
         add(searchTypeComboBox);
         
-        // Pulsante di ricerca
+        // pulsante di ricerca
         JButton searchButton = createStyledButton("Cerca");
         add(searchButton);
         
-        // Pulsante di reset
+        // pulsante di reset
         JButton resetButton = createStyledButton("Reset");
         add(resetButton);
         
-        // Configurazione degli action listener
+        // configurazione degli action listener
         
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -81,15 +77,9 @@ public class SearchPanel extends JPanel {
         });
     }
     
-    /**
-     * Crea un pulsante con stile personalizzato.
-     * 
-     * @param text Il testo del pulsante
-     * @return Il pulsante creato
-     */
+  
     private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        
+        JButton button = new JButton(text);     
         button.setPreferredSize(new Dimension(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT));
         button.setBackground(Constants.COLOR_BUTTON_BG);
         button.setForeground(Constants.COLOR_BUTTON_FG);
@@ -115,9 +105,6 @@ public class SearchPanel extends JPanel {
         return button;
     }
     
-    /**
-     * Cerca i libri in base al testo e tipo di ricerca selezionati.
-     */
     private void cercaLibri() {
         String testo = searchTextField.getText().trim();
         
@@ -129,7 +116,7 @@ public class SearchPanel extends JPanel {
         String tipo = (String) searchTypeComboBox.getSelectedItem();
         String campo;
         
-        // Converti il tipo di ricerca nel campo corrispondente
+        // converti il tipo di ricerca nel campo corrispondente
         switch (tipo) {
             case "Titolo":
                 campo = Constants.SEARCH_FIELD_TITLE;
@@ -144,15 +131,13 @@ public class SearchPanel extends JPanel {
                 campo = Constants.SEARCH_FIELD_TITLE;
         }
         
-        // Esegui la ricerca
+        // esegui la ricerca
         controller.setFiltroRicerca(testo, campo);
     }
     
-    /**
-     * Resetta la ricerca e mostra tutti i libri.
-     */
+ 
     private void resetRicerca() {
         searchTextField.setText("");
-        controller.resetFiltri(); // Usa il nuovo metodo per resettare tutti i filtri
+        controller.resetFiltri(); 
     }
 }

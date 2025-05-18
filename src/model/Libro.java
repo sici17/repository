@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
 
-/**
- * Classe che rappresenta un libro nella libreria personale.
- */
+
 public class Libro {
     
     private String titolo;
@@ -17,17 +15,9 @@ public class Libro {
     private String genere;
     private Valutazione valutazione;
     private StatoLettura statoLettura;
+   
+    // costruttore Json
     
-    /**
-     * Costruttore per creare un nuovo libro.
-     * 
-     * @param titolo Titolo del libro
-     * @param autore Autore del libro
-     * @param isbn ISBN del libro
-     * @param genere Genere del libro
-     * @param valutazione Valutazione del libro
-     * @param statoLettura Stato di lettura del libro
-     */
     @JsonCreator
     public Libro(
             @JsonProperty("titolo") String titolo, 

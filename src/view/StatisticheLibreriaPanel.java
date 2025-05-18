@@ -6,7 +6,7 @@ import controller.LibreriaController;
 import model.observer.LibreriaObserver;
 
 /**
-  StatisticheLibreriaPanel - Un esempio di come utilizzare il pattern Observer
+  esempio di come utilizzare il pattern Observer
   Questo pannello mostrerebbe statistiche sulla libreria di libri e si aggiornerebbe 
   automaticamente quando i dati della libreria cambiano.
   Questa classe svolge il ruolo di ConcreteObserver nel pattern Observer.
@@ -23,10 +23,9 @@ public class StatisticheLibreriaPanel extends JPanel implements LibreriaObserver
         
     }
     
-    /**
-     * Nel costruttore, la classe si registrerebbe come observer:
-     * 
-     * libreriaController.registraObserver(this);
-     */
+   
+      //Nel costruttore, la classe si registrerebbe come observer:
+      //libreriaController.registraObserver(this);
+    
     
 }
