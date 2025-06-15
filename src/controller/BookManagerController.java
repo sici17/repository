@@ -6,12 +6,13 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import model.Libro;
+import model.command.FiltroCompostoCommand;
+import model.command.FiltroGenereCommand;
+import model.command.FiltroInvoker;
+import model.command.FiltroRicercaCommand;
+import model.command.FiltroStatoLetturaCommand;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
-import model.strategy.FiltroCombinato;
-import model.strategy.FiltroGenereStrategy;
-import model.strategy.FiltroRicerca;
-import model.strategy.FiltroStatoLetturaStrategy;
 import util.Constants;
 
 
@@ -21,13 +22,15 @@ public class BookManagerController {
     
     private final LibreriaController libreriaController;
     private DefaultTableModel tableModel;
-    private FiltroCombinato filtroAttuale;  
+    private FiltroCompostoCommand filtroAttuale;  
+    private FiltroInvoker invoker; 
     
    
     public BookManagerController(LibreriaController libreriaController, DefaultTableModel tableModel) {
         this.libreriaController = libreriaController;
         this.tableModel = tableModel;
-        this.filtroAttuale=new FiltroCombinato();
+        this.filtroAttuale = new FiltroCompostoCommand();
+        this.invoker = new FiltroInvoker(); 
         
         // inizializza le colonne della tabella
         for (String columnName : Constants.TABLE_COLUMN_NAMES) {
@@ -37,7 +40,6 @@ public class BookManagerController {
         // carica i dati iniziali
         aggiornaTabella();
     }
-    
   
     public boolean aggiungiLibro(String titolo, String autore, String isbn, 
                                String genere, Valutazione valutazione, StatoLettura statoLettura) {
@@ -143,62 +145,62 @@ public class BookManagerController {
     
   
     public void setFiltroGenere(String genere) {
-        // rimuovi eventuali filtri per genere precedenti
-        filtroAttuale = new FiltroCombinato();
+        filtroAttuale = new FiltroCompostoCommand();
         if (genere != null && !genere.equals("tutti")) {
-            filtroAttuale.aggiungiFiltro(new FiltroGenereStrategy(genere));
+            FiltroGenereCommand comando = invoker.creaFiltroGenere(genere);
+            filtroAttuale.aggiungiComando(comando);
         }    
         aggiornaTabella();
     }
     
-   
     public void setFiltroStatoLettura(StatoLettura statoLettura) {
-        // rimuovi eventuali filtri per stato di lettura precedenti
-        filtroAttuale = new FiltroCombinato();
+        filtroAttuale = new FiltroCompostoCommand();
         if (statoLettura != null) {
-            filtroAttuale.aggiungiFiltro(new FiltroStatoLetturaStrategy(statoLettura));
+            FiltroStatoLetturaCommand comando = invoker.creaFiltroStatoLettura(statoLettura);
+            filtroAttuale.aggiungiComando(comando);
         }
         aggiornaTabella();
     }
     
-    
     public void setFiltroComposto(String genere, StatoLettura statoLettura) {
-        filtroAttuale = new FiltroCombinato();
+        filtroAttuale = new FiltroCompostoCommand();
         
-        // aggiungi filtro per genere se necessario
+        // aggiungi comando per genere se necessario
         if (genere != null && !genere.equals("tutti")) {
-            filtroAttuale.aggiungiFiltro(new FiltroGenereStrategy(genere));
+            FiltroGenereCommand comando = invoker.creaFiltroGenere(genere);
+            filtroAttuale.aggiungiComando(comando);
         }
         
-        // aggiungi filtro per stato di lettura se necessario
+        // aggiungi comando per stato di lettura se necessario
         if (statoLettura != null) {
-            filtroAttuale.aggiungiFiltro(new FiltroStatoLetturaStrategy(statoLettura));
+            FiltroStatoLetturaCommand comando = invoker.creaFiltroStatoLettura(statoLettura);
+            filtroAttuale.aggiungiComando(comando);
         }
         
         aggiornaTabella();
     }
    
     public void setFiltroRicerca(String testo, String campo) {
-        filtroAttuale = new FiltroCombinato();
+        filtroAttuale = new FiltroCompostoCommand();
         
         if (testo != null && !testo.isEmpty()) {
-            filtroAttuale.aggiungiFiltro(new FiltroRicerca(testo, campo));
+            FiltroRicercaCommand comando = invoker.creaFiltroRicerca(testo, campo);
+            filtroAttuale.aggiungiComando(comando);
         }   
         aggiornaTabella();
+        
+        
     }
     
     public void resetFiltri() {
-        filtroAttuale = new FiltroCombinato(); 
+        filtroAttuale = new FiltroCompostoCommand(); 
+        invoker.pulisciStorico();
         aggiornaTabella();
-    }
+     }
     
-    
-    
- 
     public Libro getLibro(String isbn) {
         return libreriaController.cercaLibroPerISBN(isbn);
     }
     
- 
    
 }

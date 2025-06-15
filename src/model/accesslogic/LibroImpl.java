@@ -13,11 +13,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
 import model.Libro;
+import model.command.FiltroCommand;
+import model.command.FiltroReceiver;
+
 import model.enums.StatoLettura;
-import model.strategy.FiltroGenereStrategy;
-import model.strategy.FiltroRicerca;
-import model.strategy.FiltroStatoLetturaStrategy;
-import model.strategy.FiltroStrategy;
+
 import util.Constants;
 import util.FileUtils;
 
@@ -30,6 +30,8 @@ public class LibroImpl implements LibroInt {
     private final int capacitaMassima;
     private final String percorsoFile;
     private final ObjectMapper mapper;
+    private final FiltroReceiver filtroReceiver; // 
+    
     
    
     public LibroImpl(int capacitaMassima, String percorsoFile) {
@@ -37,6 +39,7 @@ public class LibroImpl implements LibroInt {
         this.capacitaMassima = capacitaMassima;
         this.percorsoFile = FileUtils.assicuraEstensioneJson(percorsoFile);      
         this.mapper = new ObjectMapper();
+        this.filtroReceiver = new FiltroReceiver(); // NUOVO: Crea il receiver
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
     
@@ -104,34 +107,30 @@ public class LibroImpl implements LibroInt {
     public List<Libro> getTuttiLibri() {
         return new ArrayList<>(libri);
     }
-    
     @Override
-    public List<Libro> filtraLibri(FiltroStrategy filtro) {
-        if (filtro == null) {
+    public List<Libro> filtraLibri(FiltroCommand comando) {
+        if (comando == null) {
             return getTuttiLibri();
         }
         
-        return filtro.filtra(libri);
+        return comando.esegui(libri);
     }
-    // mantenere i vecchi metodi di filtro per compatibilità
+    
+    // Aggiorna questi metodi per usare il receiver direttamente:
     @Override
     public List<Libro> filtraPerGenere(String genere) {
-        FiltroStrategy filtro = new FiltroGenereStrategy(genere);
-        return filtraLibri(filtro);
+        return filtroReceiver.filtraPerGenere(libri, genere);
     }
     
     @Override
     public List<Libro> filtraPerStatoLettura(StatoLettura statoLettura) {
-        FiltroStrategy filtro = new FiltroStatoLetturaStrategy(statoLettura);
-        return filtraLibri(filtro);
+        return filtroReceiver.filtraPerStatoLettura(libri, statoLettura);
     }
     
     @Override
     public List<Libro> ricercaLibri(String testo, String campo) {
-        FiltroStrategy filtro = new FiltroRicerca(testo, campo);
-        return filtraLibri(filtro);
+        return filtroReceiver.ricercaTesto(libri, testo, campo);
     }
-    
     @Override
     public boolean salvaLibri() {
         try {

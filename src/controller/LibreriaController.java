@@ -3,11 +3,11 @@ package controller;
 import java.util.List;
 import model.Libro;
 import model.accesslogic.*;
+import model.command.FiltroCommand;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
 import model.observer.*;
 import model.observer.LibreriaObserver.TipoEvento;
-import model.strategy.FiltroStrategy;
 
 
   //controller che gestisce la logica di business dell'applicazione Libreria.
@@ -22,13 +22,13 @@ public class LibreriaController extends LibreriaSubject {
     
     private final LibroInt libro;
     private static LibreriaController instance=null;
-    
+    LibroFactory factory;
 
     private  LibreriaController(int capacitaMassima, String percorsoFile, TipoPersistenza tipoPersistenza) {
         
         
      // crea la factory appropriata in base al tipo di persistenza
-        LibroFactory factory;
+        
         switch (tipoPersistenza) {
             case JSON:
                 factory = new JSONLibroFactory();
@@ -142,9 +142,9 @@ public class LibreriaController extends LibreriaSubject {
         return libro.getTuttiLibri();
     }
     
-    public List<Libro> filtraLibri(FiltroStrategy filtro) {
-        notificaObserver(TipoEvento.FILTRO_APPLICATO, filtro);
-        return libro.filtraLibri(filtro); 
+    public List<Libro> filtraLibri(FiltroCommand comando) {
+        notificaObserver(TipoEvento.FILTRO_APPLICATO, comando);
+        return libro.filtraLibri(comando); 
     }
     
     public List<Libro> filtraPerGenere(String genere) {

@@ -3,8 +3,8 @@ package model.accesslogic;
 import java.util.List;
 
 import model.Libro;
+import model.command.FiltroCommand;
 import model.enums.StatoLettura;
-import model.strategy.FiltroStrategy;
 
 
 public interface LibroInt {
@@ -32,8 +32,7 @@ public interface LibroInt {
     List<Libro> getTuttiLibri();
     
     
-    List<Libro> filtraLibri(FiltroStrategy filtro);
-    
+    List<Libro> filtraLibri(FiltroCommand comando);    
    
     
     List<Libro> filtraPerGenere(String genere);

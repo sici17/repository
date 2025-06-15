@@ -9,9 +9,10 @@ import java.util.List;
 
 import controller.LibreriaController;
 import model.Libro;
+import model.command.FiltroGenereCommand;
+import model.command.FiltroReceiver;
 import model.enums.StatoLettura;
 import model.enums.Valutazione;
-import model.strategy.FiltroGenereStrategy;
 
 public class TestFiltraggi {
     
@@ -62,8 +63,9 @@ public class TestFiltraggi {
         assertEquals("Libro Fantasy 1", risultatiRicerca.get(0).getTitolo());
         
         // Test filtro strategy
-        FiltroGenereStrategy filtroStrategy = new FiltroGenereStrategy("Romanzo");
-        List<Libro> libriRomanzo = controller.filtraLibri(filtroStrategy);
+        FiltroReceiver receiver = new FiltroReceiver();
+        FiltroGenereCommand comandoGenere = new FiltroGenereCommand(receiver, "Romanzo");
+        List<Libro> libriRomanzo = controller.filtraLibri(comandoGenere);
         assertEquals(1, libriRomanzo.size());
         assertEquals("Libro Romanzo", libriRomanzo.get(0).getTitolo());
         
